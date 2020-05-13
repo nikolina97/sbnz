@@ -1,0 +1,12 @@
+package rules
+ 
+import com.sbnz.bankcredit.model.User;
+
+rule "Set password"
+	no-loop
+	when 
+		userObject: User(username=="admin")
+	then
+		userObject.setPassword("123456");
+		update(userObject);
+	end
