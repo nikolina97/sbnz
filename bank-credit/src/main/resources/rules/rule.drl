@@ -5,7 +5,7 @@ import com.sbnz.bankcredit.model.User;
 rule "Set password"
 	no-loop
 	when 
-		userObject: User(username=="admin")
+		userObject: User(username=="marko")
 	then
 		userObject.setPassword("123456");
 		update(userObject);

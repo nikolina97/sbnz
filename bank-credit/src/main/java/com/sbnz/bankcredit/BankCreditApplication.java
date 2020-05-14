@@ -13,9 +13,9 @@ public class BankCreditApplication {
 		SpringApplication.run(BankCreditApplication.class, args);
 	}
 	
-	@Bean
-	public KieContainer kieContainer() {
-		return KieServices.Factory.get().getKieClasspathContainer();
-	}
+//	@Bean
+//	public KieContainer kieContainer() {
+//		return KieServices.Factory.get().getKieClasspathContainer();
+//	}
 	
 }
