@@ -1,5 +1,7 @@
 package com.sbnz.bankcredit.model;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,26 +26,39 @@ public class Warrantly {
 	@Column(name = "guarantor")
 	private Client guarantor;
 	
-	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-	@JoinColumn(name = "real_estate_id")
-	private RealEstate realEstate;
+	@Column(name = "insurance")
+	private boolean insurance;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "warrantly_id")
+	private List<RealEstate> realEstate;
 
 	public Warrantly() {
 		super();
 		this.guarantor = null;
 		this.realEstate = null;
+		this.insurance = false;
 	}
 
 	public Warrantly(Client guarantor) {
 		super();
 		this.guarantor = guarantor;
 		this.realEstate = null;
+		this.insurance = false;
 	}
 	
-	public Warrantly(RealEstate realEstate) {
+	public Warrantly(List<RealEstate> realEstate) {
 		super();
 		this.realEstate = realEstate;
 		this.guarantor = null;
+		this.insurance = false;
+	}
+
+	public Warrantly(boolean insurance) {
+		super();
+		this.guarantor = null;
+		this.realEstate = null;
+		this.insurance = insurance;
 	}
 
 	public long getId() {
@@ -61,12 +77,20 @@ public class Warrantly {
 		this.guarantor = guarantor;
 	}
 
-	public RealEstate getRealEstate() {
+	public List<RealEstate> getRealEstate() {
 		return realEstate;
 	}
 
-	public void setRealEstate(RealEstate realEstate) {
+	public void setRealEstate(List<RealEstate> realEstate) {
 		this.realEstate = realEstate;
+	}
+
+	public boolean isInsurance() {
+		return insurance;
+	}
+
+	public void setInsurance(boolean insurance) {
+		this.insurance = insurance;
 	}
 	
 }

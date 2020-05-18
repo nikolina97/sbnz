@@ -3,8 +3,6 @@ package com.sbnz.bankcredit.model;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,13 +13,13 @@ import javax.persistence.Table;
 
 @Entity  
 @Table(name="client")  
-@AttributeOverrides({  
-    @AttributeOverride(name="id", column=@Column(name="id")),  
-    @AttributeOverride(name="username", column=@Column(name="username")),
-    @AttributeOverride(name="password", column=@Column(name="password")),
-    @AttributeOverride(name="first_name", column=@Column(name="first_name")),
-    @AttributeOverride(name="last_name", column=@Column(name="last_name")),
-}) 
+//@AttributeOverrides({  
+//    @AttributeOverride(name="id", column=@Column(name="id")),  
+//    @AttributeOverride(name="username", column=@Column(name="username")),
+//    @AttributeOverride(name="password", column=@Column(name="password")),
+//    @AttributeOverride(name="first_name", column=@Column(name="first_name")),
+//    @AttributeOverride(name="last_name", column=@Column(name="last_name")),
+//}) 
 public class Client extends User{
 	
 	/**
@@ -49,7 +47,7 @@ public class Client extends User{
 	private Timestamp accountOpeningDate;
 	
 	@Column(name = "reward_points")
-	private long rewardPoints;
+	private int rewardPoints;
 	
 	public Client() {
 		super();
@@ -61,7 +59,7 @@ public class Client extends User{
 
 	public Client(String username, String password, String firstName, String lastName, List<Authority> authorities,
 			Timestamp dateOfBirth, String jmbg, Account account, double monthlyIncome, double monthlyOutcome,
-			Timestamp accountOpeningDate, long rewardPoints) {
+			Timestamp accountOpeningDate, int rewardPoints) {
 		super(username, password, firstName, lastName, authorities);
 		this.dateOfBirth = dateOfBirth;
 		this.jmbg = jmbg;
@@ -120,11 +118,11 @@ public class Client extends User{
 		this.accountOpeningDate = accountOpeningDate;
 	}
 
-	public long getRewardPoints() {
+	public int getRewardPoints() {
 		return rewardPoints;
 	}
 
-	public void setRewardPoints(long rewardPoints) {
+	public void setRewardPoints(int rewardPoints) {
 		this.rewardPoints = rewardPoints;
 	}
 	

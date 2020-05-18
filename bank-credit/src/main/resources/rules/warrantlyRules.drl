@@ -1,0 +1,80 @@
+package rules
+ 
+import com.sbnz.bankcredit.model.CreditRequest;
+import com.sbnz.bankcredit.model.Answer;
+import com.sbnz.bankcredit.model.Warrantly;
+import com.sbnz.bankcredit.model.RealEstate;
+
+rule "Odredi cijenu nekretnine, zona 1, tip stan"
+	agenda-group "warrantly"
+	when
+		$re : RealEstate(price == 0.0, realEstateType == RealEstateType.Apartment, zone == 1, $squareFootage : squareFootage)
+		$warrantly: Warrantly(guarantor == null, realEstate != null, insurance == false)
+	then
+		double price = 1300 * $squareFootage * 1.3; 
+		modify($re){setPrice(price);}
+	end
+
+rule "Odredi cijenu nekretnine, zona 2, tip stan"
+	agenda-group "warrantly"
+	when
+		$re : RealEstate(price == 0.0, realEstateType == RealEstateType.Apartment, zone == 2, $squareFootage : squareFootage)
+	then
+		double price = 1200 * $squareFootage * 1.3; 
+		modify($re){setPrice(price);}
+	end
+	
+rule "Odredi cijenu nekretnine, zona 1, tip kuca"
+	agenda-group "warrantly"
+	when
+		$re : RealEstate(price == 0.0, realEstateType == RealEstateType.House, zone == 1, $squareFootage : squareFootage)
+	then
+		double price = 1200 * $squareFootage * 1.1; 
+		modify($re){setPrice(price);}
+	end
+
+rule "Odredi cijenu nekretnine, zona 2, tip kuca"
+	agenda-group "warrantly"
+	when
+		$re : RealEstate(price == 0.0, realEstateType == RealEstateType.House, zone == 2, $squareFootage : squareFootage)
+	then
+		double price = 1300 * $squareFootage * 1.1; 
+		modify($re){setPrice(price);}
+	end
+
+rule "Update warranlty"
+	salience -3
+	agenda-group "warrantly"
+	no-loop
+	when
+		$allRealEstates : List() from collect(RealEstate(price != 0.0))
+		$warrantly : Warrantly(realEstate != null)
+		$cr : CreditRequest (warrantly == $warrantly)
+	then
+		modify($warrantly) {setRealEstate($allRealEstates); }
+		modify ($cr) { setWarrantly($warrantly); }
+	end
+
+rule "Zahtjev se odbija ako nekretnine nemaju dovoljnu vrijednost"
+	salience -5
+	agenda-group "warrantly"
+	when
+		$cr: CreditRequest($warrantly : warrantly, $sumOfMoney : sumOfMoney)
+		Warrantly(this == $warrantly, guarantor == null, realEstate != null, insurance == false, $realEstates : realEstate)
+		Number(doubleValue < $sumOfMoney*1.2) from accumulate(
+            RealEstate($q: price) from $realEstates,
+            sum($q))
+	then
+		insert(new Answer(false, "Nekretnine nemaju dovoljnu vrijednost"));
+	end
+
+rule "Pozitivan odgovor za garanciju"
+	salience -10
+	agenda-group "warrantly"
+	when
+		not(Answer(accepted == false))
+	then
+		insert(new Answer(true, "Osnovni uslovi za garanciju su ispunjeni"));
+	end	
+
+//Dodati pravila za ziranta

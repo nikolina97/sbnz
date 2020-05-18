@@ -11,6 +11,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { AppRoutingModule } from './app.routing';
 import { LoginComponent } from './pages/login/login.component';
 import { BankComponent } from './pages/bank/bank.component';
+import { BankClientComponent } from './pages/bank-client/bank-client.component';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import { BankComponent } from './pages/bank/bank.component';
   declarations: [
     AppComponent,
     LoginComponent,
-    BankComponent
+    BankComponent,
+    BankClientComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -45,12 +45,12 @@ public class AuthenticationController {
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping( value = "/proba")
     public ResponseEntity<String> proba() {
 		
-//			uService.fireRules();
-            return new ResponseEntity<>("bla bla", HttpStatus.OK);
+			String answer = uService.fireRules();
+            return new ResponseEntity<>(answer, HttpStatus.OK);
 
     }
 	
@@ -59,6 +59,7 @@ public class AuthenticationController {
 			HttpServletResponse response) throws AuthenticationException, IOException {
 
 		final Authentication authentication;
+		System.out.println(authenticationRequest.getUsername());
 		try {
 			this.userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 			authentication = authenticationManager

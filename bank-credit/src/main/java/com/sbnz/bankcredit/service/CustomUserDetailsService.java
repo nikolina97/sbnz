@@ -10,7 +10,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.sbnz.bankcredit.model.Client;
+import com.sbnz.bankcredit.model.User;
 import com.sbnz.bankcredit.repository.IAuthorityRepository;
+import com.sbnz.bankcredit.repository.IClientRepository;
 import com.sbnz.bankcredit.repository.IUserRepository;
 
 @Service
@@ -29,6 +32,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private IClientRepository clientRepository;
 
 	// Funkcija koja na osnovu username-a iz baze vraca objekat User-a
 	@Override
@@ -38,6 +44,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 			return u;
 		else
 			throw new UsernameNotFoundException(String.format("User with username '%s' not found", username));
+	}
+	
+	public Client getClient(User user) {
+		Client client = clientRepository.findById(user.getId()).orElse(null);
+		return client;
 	}
 
 }

@@ -1,0 +1,157 @@
+package rules
+ 
+import com.sbnz.bankcredit.model.CreditRequest;
+import com.sbnz.bankcredit.model.Answer;
+import com.sbnz.bankcredit.model.CreditType;
+import com.sbnz.bankcredit.model.Contract;
+import com.sbnz.bankcredit.model.Client;
+	
+rule "Zahtjev se ne prihvata ako je suma veca od 300 000"
+	agenda-group "basic req rules"
+	when
+		not(Answer(accepted == false))
+		$cr : CreditRequest(sumOfMoney > 300000)
+	then 
+        insert(new Answer(false, "Suma koju zahtjevate mora biti manja od 300 000 €"));
+	end
+
+rule "Zahtjev se ne prihvata ako je suma manja od 1 000"
+	agenda-group "basic req rules"
+	when
+		not(Answer(accepted == false))
+		$cr : CreditRequest(sumOfMoney < 1000)
+	then 
+        insert(new Answer(false, "Suma koju zahtjevate mora biti veca od 1 000 €"));
+	end
+
+rule "Zahtejv se odbija ako je period isplate manji od 1 godinu"
+	agenda-group "basic req rules"
+	when
+		$cr : CreditRequest(monthlyPaymentPeriod < 12)
+		not(Answer(accepted == false))
+	then 
+        insert(new Answer(false, "Period isplate mora biti bar 12 mjeseci"));
+	end
+
+rule "Zahtjev se obija ako je period ispalte veci od 25 godina"
+	agenda-group "basic req rules"
+	when
+		$cr : CreditRequest(monthlyPaymentPeriod > 300)
+		not(Answer(accepted == false))
+	then 
+        insert(new Answer(false, "Period isplate mora biti manji ili jednak 25 godina"));
+	end
+
+rule "Zahtjev se odbija ako je osnovna mjesecna rata manja od 100"
+	agenda-group "basic req rules"
+	when
+		$cr : CreditRequest(sumOfMoney/monthlyPaymentPeriod < 100)
+		not(Answer(accepted == false))
+	then
+        insert(new Answer(false, "Osnovna mjesecna rata je ispod dozvoljene"));
+	end
+
+rule "Zahtjev se odbija ako je kredit stambeni, a suma manja od 30 000"
+	agenda-group "basic req rules"
+	when
+		$cr : CreditRequest(creditType == CreditType.Housing, sumOfMoney < 30000)
+		not(Answer(accepted == false))
+	then
+        insert(new Answer(false, "Nedovoljna suma novca za stambeni kredit"));
+	end
+
+rule "Zahtjev se odbija ako je kredit investicioni, a suma manja od 40 000"
+	agenda-group "basic req rules"
+	when
+		$cr : CreditRequest(creditType == CreditType.Investment, sumOfMoney < 40000)
+		not(Answer(accepted == false))
+	then
+        insert(new Answer(false, "Nedovoljna suma novca za investicioni kredit"));
+	end
+
+rule "Zahtjev se odbija ako je kredit potrosacki, a suma veca od 40 000"
+	agenda-group "basic req rules"
+	when
+		$cr : CreditRequest(creditType == CreditType.Consumer, sumOfMoney > 30000)
+		not(Answer(accepted == false))
+	then
+        insert(new Answer(false, "Maksimalna suma za potrosacki kredit je 40 000"));
+	end
+
+rule "Zahtjev se odbija ako su klijentova dosadasnja mjesecna zaduzenja vise od 30% mjesecnih primanja"
+	agenda-group "basic req rules"
+	when
+		not(Answer(accepted == false))
+		$client : Client(monthlyOutcome > 0.3*monthlyIncome)
+	then
+		insert(new Answer(false, "Klijentova mjesecna zaduzenja i primanja ne zadovoljavaju zahtjeve"));
+	end
+
+rule "Zahtjev se odbija ako klijent ima vise od 65 godina, a vremenski period isplate kredita je vise od 15 godina"
+	agenda-group "basic req rules"
+	when
+		$date : Date($t : time)
+		$client: Client(dateOfBirth.getTime() < $t)
+	then
+		insert(new Answer(false, "Maksimalan vremenski period isplate kredite u odnosu na vase godine je 15 godina"));
+	end
+
+rule "Zahtjev se odbija ako klijent ima vise od 1 stambenog ili investicionog kredita i vise od 2 potrosacka"
+	agenda-group "basic req rules"
+	when
+		not(Answer(accepted == false))
+		$client : Client()
+		$total1 : Number(intValue >1) from accumulate(
+				Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Housing || creditRequest.creditType == CreditType.Investment),
+				init(int count = 0; ),
+				action(count += 1;),
+				result (count)
+		)
+		$total2 : Number(intValue > 1) from accumulate(
+				Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Consumer),
+				init(int count_ = 0; ),
+				action(count_ += 1;),
+				result (count_)
+		)
+	then
+		insert(new Answer(false, "Zahtjev se odbija jer vec imate vise od 1 stambenog ili investicionog i vise od 2 potrosacka aktivna kredita "));
+	end
+
+rule "Zahtjev se odbija ako klijent ima vise od 2 stambena ili investiciona kredita"
+	agenda-group "basic req rules"
+	when
+		not(Answer(accepted == false))
+		$client : Client()
+		$total : Number(intValue >2) from accumulate(
+				Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Housing || creditRequest.creditType == CreditType.Investment),
+				init(int count = 0; ),
+				action(count += 1;),
+				result (count)
+		)
+	then
+		insert(new Answer(false, "Zahtjev se odbija jer vec imate vise od 2 stambena ili investiciona aktivna kredita "));
+	end
+
+rule "Zahtjev se odbija ako klijent ima vise od 3 aktivna potrosacka kredita"
+	agenda-group "basic req rules"
+	when
+		not(Answer(accepted == false))
+		$client : Client()
+		$total : Number(intValue >3) from accumulate(
+				Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Consumer),
+				init(int count = 0; ),
+				action(count += 1;),
+				result (count)
+		)
+	then
+		insert(new Answer(false, "Zahtjev se odbija jer vec imate vise od 3 aktivna potrosacka kredita "));
+	end
+	
+rule "Pozitivan odgovor"
+	salience -10
+	agenda-group "basic req rules"
+	when
+		not(Answer(accepted == false))
+	then
+		insert(new Answer(true, "Osnovni uslovi vezani za zahtjev su ispunjeni "));
+	end

@@ -1,0 +1,45 @@
+package rules;
+
+import com.sbnz.bankcredit.model.Client;
+import com.sbnz.bankcredit.model.Answer;
+import com.sbnz.bankcredit.model.Contract;
+import com.sbnz.bankcredit.model.CreditType;
+import java.util.Date;
+
+/*
+rule "check if monthly outcomes + monthly payment are higher than 40% of monthly incomes"
+	agenda-group "basic client req"
+	when
+		not(Answer(accepted == false))
+		$contract : Contract($client : creditRequest.client, $monthlyPayment : monthlyPayment, signed == false)
+		Client(this == $client, (monthlyOutcome + $monthlyPayment) > 0.4*monthlyIncome)
+	then
+		insert(new Answer(false, "Klijentova mjesecna zaduzenja uz mjesecnu ratu i primanja ne zadovoljavaju zahtjeve"));		
+	end
+
+rule "Zahtjev se odbija ako je ukupna suma korisnikovih kredita veca od 350 000"
+	agenda-group "basic client req"
+	when
+		not(Answer(accepted == false))
+		$client : Client()
+		$total : Number(doubleValue > 0) from accumulate(
+				Contract(active == true, signed == true, client == $client, $sumOfMoney : creditRequest.sumOfMoney),
+				init(double total = 0; ),
+				action(total += $sumOfMoney;),
+				reverse(total -= $sumOfMoney;),
+				result (new Double(total))
+		)
+		$contract : Contract(client == $client, signed == false, creditRequest.sumOfMoney + $total.doubleValue() > 350000)
+	then
+		insert(new Answer(false, "Suma svih dosadasnjih kredita korisnika uz zahtjevani iznosi vise nego sto je dozvoljeno. "));	
+	end
+*/
+/*
+rule "Pozitivan odgovor za osnovne uslove za klijenta"
+	salience -10
+	agenda-group "basic client req"
+	when
+		not(Answer(accepted == false))
+	then
+		insert(new Answer(true, "Osnovni uslovi za klijenta su ispunjeni"));
+	end	*/

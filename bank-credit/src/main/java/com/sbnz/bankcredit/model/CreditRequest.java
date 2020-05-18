@@ -3,6 +3,8 @@ package com.sbnz.bankcredit.model;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,6 +33,7 @@ public class CreditRequest {
 	@Column(name = "monthly_payment_period")
 	private int monthlyPaymentPeriod;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "credit_type")
 	private CreditType creditType;
 	
