@@ -31,19 +31,22 @@ function int checkPrice(double totalPrice, double loanValue) {
 rule 'Odrediti osnovnu kamatu'
 	salience 10
 	agenda-group "reward points"
+	no-loop
 	when
 		$contract : Contract($id : id, signed == false)	
+		not(ContractDTO())
 	then
 		insert (new ContractDTO($id, 2, 0)); //hard coded
-		System.out.println("CAO CAO CAO CAO ");
 	end
 
 rule "5 bodova"
 	agenda-group "reward points"
+	salience 10
+	//lock-on-active
 	no-loop
-	lock-on-active
 	when
 		$client : Client()
+		ContractDTO(rewardPoints == 0)
 		$invHous : Number (intValue >= 0) from accumulate(
 				CreditRequest(client == $client, creditType == CreditType.Housing || creditType == CreditType.Investment),
 				init(int count = 0; ),
@@ -95,16 +98,15 @@ rule "5 bodova"
 		int totalPoints = 5 + $contracts.intValue() + $guarantee.intValue();
 		int completedConditions = $invHous.intValue() + $sumOfMoney.intValue() + $account.intValue() + greaterThan0($contracts.intValue(), 1) + greaterThan0($guarantee.intValue(), 0) ;
 		insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
-		System.out.println("5 boda");
-		
 	end
 
 rule "4 boda"
 	agenda-group "reward points"
+	salience 10
 	no-loop
-	lock-on-active
 	when
 		$client : Client()
+		ContractDTO(rewardPoints == 0)
 		$invHous : Number (intValue >= 0) from accumulate(
 				CreditRequest(client == $client, creditType == CreditType.Housing || creditType == CreditType.Investment),
 				init(int count = 0; ),
@@ -154,7 +156,6 @@ rule "4 boda"
 		int completedConditions = $invHous.intValue() + $sumOfMoney.intValue() + $account.intValue() + greaterThan0($contracts.intValue(), 0) + checkPrice($realEstatesTotalValue.intValue(), $creditRequest.getSumOfMoney()) ;
 		if (completedConditions >= 2){
 			insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
-			System.out.println("4 boda");
 		}
 	end	
 
@@ -182,11 +183,12 @@ rule "1 bod"
 
 rule "Dodaj dodatne bodove"
 	agenda-group "reward points"
+	salience 5
 	no-loop
 	when
 		$contract : ContractDTO(rewardPoints == 0)
 		$client : Client()
-		$total :  Number (intValue >= 0) from accumulate(
+		$total :  Number (intValue > 0) from accumulate(
 				ConditionDTO($totalPoints : totalPoints, $percent : percent),
 				init(int count = 0; double perc = 0;),
 				action(
@@ -202,12 +204,15 @@ rule "Dodaj dodatne bodove"
 				result (count)
 		)
 	then
-		modify($client) {setRewardPoints($client.getRewardPoints() + $total.intValue());}
-		modify($contract) {setRewardPoints($client.getRewardPoints() + $total.intValue());}
+		System.out.println("rp " + $client.getRewardPoints() + " total " + $total.intValue());
+		int val = $client.getRewardPoints() + $total.intValue();
+		modify($client) {setRewardPoints(val);}
+		modify($contract) {setRewardPoints(val);}
 	end
 
 rule "Kamata se umanjuje za 5% i racuna se mjesecna rata"
 	agenda-group "reward points"
+	salience 5
 	no-loop
 	when
 		$contractDTO : ContractDTO(rewardPoints >= 2, rewardPoints < 10, $basicInterest : basicInterest)
@@ -226,6 +231,7 @@ rule "Kamata se umanjuje za 5% i racuna se mjesecna rata"
 
 rule "Kamata se umanjuje za 20% i racuna se mjesecna rata"
 	agenda-group "reward points"
+	salience 5
 	no-loop
 	when
 		$contractDTO : ContractDTO(rewardPoints >= 10, rewardPoints < 15, $basicInterest : basicInterest)
@@ -240,10 +246,12 @@ rule "Kamata se umanjuje za 20% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 1);}
+		
 	end
 
 rule "Kamata se umanjuje za 30% i racuna se mjesecna rata"
 	agenda-group "reward points"
+	salience 5
 	no-loop
 	when
 		$contractDTO : ContractDTO(rewardPoints >= 15, rewardPoints < 20, $basicInterest : basicInterest)
@@ -258,13 +266,15 @@ rule "Kamata se umanjuje za 30% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 2);}
+		
 	end	
 
 rule "Kamata se umanjuje za 40% i racuna se mjesecna rata"
 	agenda-group "reward points"
+	salience 5
 	no-loop
 	when
-		$contractDTO : ContractDTO(rewardPoints >= 20, $basicInterest : basicInterest)
+		$contractDTO : ContractDTO(rewardPoints >= 20, $basicInterest : basicInterest, $rp : rewardPoints)
 		$client : Client()
 		$contract : Contract (client == $client, signed == false, active == true, interest == 0.0)
 		$creditRequest : CreditRequest(client == $client, $sumOfMoney : sumOfMoney, $monthlyPaymentPeriod : monthlyPaymentPeriod) 
