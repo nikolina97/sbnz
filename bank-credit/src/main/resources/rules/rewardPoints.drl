@@ -140,7 +140,7 @@ rule "4 boda"
 		
 		$realEstatesTotalValue: Number(doubleValue >=0) from accumulate
 				(
-				CreditRequest(client == $client, warrantly.realEstate != null, $realEstates : warrantly.realEstate),
+				CreditRequest(client == $client, warrantly != null, warrantly.realEstate != null, $realEstates : warrantly.realEstate),
 				init(double count = 0; ),
 				action(
 				for (Object re : $realEstates) {
