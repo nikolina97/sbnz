@@ -1,0 +1,146 @@
+<div class="card card-stats mb-6 mb-xl-0">
+    <ng-template [ngIf]="showRequest">
+        <div class="card-body">
+            <form (ngSubmit)="sendRequest()">
+                <h6 class="heading-small text-muted mb-4">Zahtjev za kredit</h6>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="form-control-label" for="input-sum">Suma</label>
+                            <input type="text" id="input-sum" class="form-control form-control-alternative"
+                                value="{{contract?.creditRequest.sumOfMoney}}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="form-control-label" for="inputGroupSelect01">Period
+                                isplate</label>
+                            <input type="number" id="input-sum" class="form-control"
+                                value="{{contract?.creditRequest.monthlyPaymentPeriod}}" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="form-control-label" for="credit-type">Tip kredita</label>
+                            <input type="text" id="input-sum" class="form-control form-control-alternative"
+                                value="{{contract?.creditRequest.creditType}}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <ng-template [ngIf]="contract.creditRequest.warrantly.realEstate != null">
+                                <label class="form-control-label" for="credit-type">Garancija: Hipoteka</label>
+                                <div class="table-responsive">
+                                    <table class="table align-items-center table-flush">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col">Zona</th>
+                                                <th scope="col">Tip</th>
+                                                <th scope="col">Kvadratura</th>
+                                                <th scope="col">Cijena</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let element of contract?.creditRequest.warrantly.realEstate">
+                                                <td>
+                                                    {{element.zone}}
+                                                </td>
+                                                <td>
+                                                    {{element.realEstateType}}
+                                                </td>
+                                                <td>
+                                                    {{element.squareFootage}}
+                                                </td>
+                                                <td>
+                                                    {{element.price}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <label class="form-control-label"> </label>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">Pošalji zahtjev</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </ng-template>
+    <ng-template [ngIf] = "showContract">
+        <div class="card-body">
+            <h4 class="heading-small text-muted mb-4">Ugovor</h4>
+            <h6 class="heading-small text-muted mb-4">Vas zahtjev je prihvacen</h6>              
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="form-control-label" for="input-sum">Zatrazena suma</label>
+                        <input type="text" id="input-sum" class="form-control form-control-alternative"
+                            value="{{contract?.creditRequest.sumOfMoney}}" readonly>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="form-control-label" for="inputGroupSelect01">Period
+                            isplate</label>
+                        <input type="number" id="input-sum" class="form-control"
+                            value="{{contract?.creditRequest.monthlyPaymentPeriod}}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="form-control-label" for="input-sum">Kamata</label>
+                        <input type="text" id="input-sum" class="form-control form-control-alternative"
+                            value="{{contract?.interest}}" readonly>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="form-control-label" for="inputGroupSelect01">Mjesecna rata</label>
+                        <input type="number" id="input-sum" class="form-control"
+                            value="{{contract?.monthlyPayment}}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="form-control-label" for="input-sum">Ukupna suma</label>
+                        <input type="text" id="input-sum" class="form-control form-control-alternative"
+                            value="{{contract?.remainingSum}}" readonly>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="form-control-label" for="inputGroupSelect01">Datum</label>
+                        <input type="text" id="input-sum" class="form-control"
+                            value="{{contract?.signingDate | date:'medium'}}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class = "row">
+                <div class="col-lg-6">
+                    <label class="form-control-label"> </label>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-primary btn-lg btn-block">Prihvati</button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <label class="form-control-label"> </label>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-danger btn-lg btn-block">Odustani</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</div>

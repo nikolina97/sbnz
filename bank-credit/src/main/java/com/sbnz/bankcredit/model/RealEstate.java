@@ -33,7 +33,6 @@ public class RealEstate {
 	
 	public RealEstate() {
 		super();
-		this.price = 0;
 	}
 
 	public RealEstate(int zone, RealEstateType realEstateType, int squareFootage) {
@@ -41,7 +40,14 @@ public class RealEstate {
 		this.zone = zone;
 		this.realEstateType = realEstateType;
 		this.squareFootage = squareFootage;
-		this.price = 0;
+	}
+
+	public RealEstate(int zone, RealEstateType realEstateType, int squareFootage, double price) {
+		super();
+		this.zone = zone;
+		this.realEstateType = realEstateType;
+		this.squareFootage = squareFootage;
+		this.price = price;
 	}
 
 	public long getId() {

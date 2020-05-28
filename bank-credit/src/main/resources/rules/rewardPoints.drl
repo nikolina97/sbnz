@@ -3,6 +3,7 @@ package rules;
 import com.sbnz.bankcredit.model.Client;
 import com.sbnz.bankcredit.model.Contract;
 import com.sbnz.bankcredit.model.CreditType;
+import com.sbnz.bankcredit.model.CreditRequest;
 import java.util.Date;
 import java.util.List;
 import com.sbnz.bankcredit.dto.ConditionDTO;
@@ -37,6 +38,7 @@ rule 'Odrediti osnovnu kamatu'
 		not(ContractDTO())
 	then
 		insert (new ContractDTO($id, 2, 0)); //hard coded
+		System.out.println("Odrediti osnovnu kamatu");
 	end
 
 rule "5 bodova"
@@ -82,7 +84,7 @@ rule "5 bodova"
 				result (count)
 		)
 		
-		$creditRequest : CreditRequest(client == $client)
+		$creditRequest : CreditRequest()
 		
 		$allContracts : List() from collect(Contract(active == false, signed == true))
 		
@@ -98,6 +100,7 @@ rule "5 bodova"
 		int totalPoints = 5 + $contracts.intValue() + $guarantee.intValue();
 		int completedConditions = $invHous.intValue() + $sumOfMoney.intValue() + $account.intValue() + greaterThan0($contracts.intValue(), 1) + greaterThan0($guarantee.intValue(), 0) ;
 		insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
+		System.out.println("5 bodova");
 	end
 
 rule "4 boda"
@@ -136,7 +139,7 @@ rule "4 boda"
 			result (count)
 		)
 		
-		$creditRequest : CreditRequest(client == $client)
+		$creditRequest : CreditRequest()
 		
 		$allContracts : List() from collect(Contract(active == false, signed == true))
 		
@@ -157,6 +160,7 @@ rule "4 boda"
 		if (completedConditions >= 2){
 			insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
 		}
+		System.out.println("4 bodova");
 	end	
 
 rule "3 boda"
@@ -208,6 +212,7 @@ rule "Dodaj dodatne bodove"
 		int val = $client.getRewardPoints() + $total.intValue();
 		modify($client) {setRewardPoints(val);}
 		modify($contract) {setRewardPoints(val);}
+		System.out.println("Dodaj dodatne bodove");
 	end
 
 rule "Kamata se umanjuje za 5% i racuna se mjesecna rata"
@@ -218,7 +223,7 @@ rule "Kamata se umanjuje za 5% i racuna se mjesecna rata"
 		$contractDTO : ContractDTO(rewardPoints >= 2, rewardPoints < 10, $basicInterest : basicInterest)
 		$client : Client()
 		$contract : Contract (client == $client, signed == false, active == true, interest == 0.0)
-		$creditRequest : CreditRequest(client == $client, $sumOfMoney : sumOfMoney, $monthlyPaymentPeriod : monthlyPaymentPeriod) 
+		$creditRequest : CreditRequest($sumOfMoney : sumOfMoney, $monthlyPaymentPeriod : monthlyPaymentPeriod) 
 	then
 		double interest = $basicInterest*0.95;
 		double totalSum =  $sumOfMoney + interest/100*$sumOfMoney;
@@ -227,6 +232,8 @@ rule "Kamata se umanjuje za 5% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 1);}
+		System.out.println($contract.getInterest());
+		
 	end
 
 rule "Kamata se umanjuje za 20% i racuna se mjesecna rata"
@@ -237,7 +244,7 @@ rule "Kamata se umanjuje za 20% i racuna se mjesecna rata"
 		$contractDTO : ContractDTO(rewardPoints >= 10, rewardPoints < 15, $basicInterest : basicInterest)
 		$client : Client()
 		$contract : Contract (client == $client, signed == false, active == true, interest == 0.0)
-		$creditRequest : CreditRequest(client == $client, $sumOfMoney : sumOfMoney, $monthlyPaymentPeriod : monthlyPaymentPeriod) 
+		$creditRequest : CreditRequest($sumOfMoney : sumOfMoney, $monthlyPaymentPeriod : monthlyPaymentPeriod) 
 	then
 		double interest = $basicInterest*0.80;
 		double totalSum =  $sumOfMoney + interest/100*$sumOfMoney;
@@ -246,7 +253,7 @@ rule "Kamata se umanjuje za 20% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 1);}
-		
+		System.out.println($contract.getInterest());
 	end
 
 rule "Kamata se umanjuje za 30% i racuna se mjesecna rata"
@@ -257,7 +264,7 @@ rule "Kamata se umanjuje za 30% i racuna se mjesecna rata"
 		$contractDTO : ContractDTO(rewardPoints >= 15, rewardPoints < 20, $basicInterest : basicInterest)
 		$client : Client()
 		$contract : Contract (client == $client, signed == false, active == true, interest == 0.0)
-		$creditRequest : CreditRequest(client == $client, $sumOfMoney : sumOfMoney, $monthlyPaymentPeriod : monthlyPaymentPeriod) 
+		$creditRequest : CreditRequest($sumOfMoney : sumOfMoney, $monthlyPaymentPeriod : monthlyPaymentPeriod) 
 	then
 		double interest = $basicInterest*0.70;
 		double totalSum =  $sumOfMoney + interest/100*$sumOfMoney;
@@ -266,7 +273,7 @@ rule "Kamata se umanjuje za 30% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 2);}
-		
+		System.out.println($contract.getInterest());
 	end	
 
 rule "Kamata se umanjuje za 40% i racuna se mjesecna rata"
@@ -277,7 +284,7 @@ rule "Kamata se umanjuje za 40% i racuna se mjesecna rata"
 		$contractDTO : ContractDTO(rewardPoints >= 20, $basicInterest : basicInterest, $rp : rewardPoints)
 		$client : Client()
 		$contract : Contract (client == $client, signed == false, active == true, interest == 0.0)
-		$creditRequest : CreditRequest(client == $client, $sumOfMoney : sumOfMoney, $monthlyPaymentPeriod : monthlyPaymentPeriod) 
+		$creditRequest : CreditRequest($sumOfMoney : sumOfMoney, $monthlyPaymentPeriod : monthlyPaymentPeriod) 
 	then
 		double interest = $basicInterest*0.60;
 		double totalSum =  $sumOfMoney + interest/100*$sumOfMoney;
@@ -286,5 +293,6 @@ rule "Kamata se umanjuje za 40% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 5);}
+		System.out.println($contract.getInterest());
 	end
 

@@ -1,5 +1,6 @@
 package com.sbnz.bankcredit.service;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -70,6 +71,7 @@ public class CreditRequestService {
 			}
 		}
 		kieSession.dispose();
+		System.out.println(answer);
 		return answer;
 	}
 
@@ -144,7 +146,7 @@ public class CreditRequestService {
 //		return answer;
 //	}
 
-	public Answer createContract(CreditRequest cr) {
+	public Answer createContract(Contract cr) {
 		User uclient = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Client client = userDetailsService.getClient(uclient);
 		KieSession kieSession = kieContainer.newKieSession("rulesSession");
@@ -152,18 +154,21 @@ public class CreditRequestService {
 		cr.setClient(client);
 		kieSession.insert(cr);
 		kieSession.insert(client);
+		cr.getCreditRequest().setClient(client);
+		CreditRequest creditRequest = cr.getCreditRequest();
+		kieSession.insert(creditRequest);
+
 		Collection<Contract> conts = contractRepository.findAll();
 		for (Contract con : conts) {
 			kieSession.insert(con);
 		}
-		Contract contract = new Contract(cr, 0, 0, null, true, 0);
-		contract.setClient(client);
-		kieSession.insert(contract);
 		kieSession.fireAllRules();
-		
 		kieSession.dispose();
 		
-		Answer answer = new Answer(true, "Ponuda", contract);
+		Date now = new Date();
+		Timestamp ts = new Timestamp(now.getTime());
+		cr.setSigningDate(ts);
+		Answer answer = new Answer(true, "Ponuda", cr);
 		
 		return answer;
 	}

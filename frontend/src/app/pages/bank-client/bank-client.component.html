@@ -1,1 +1,184 @@
-<p>bank-client works!</p>
+<app-sidebar></app-sidebar>
+<div class="main-content">
+    <div class="bg-gradient-danger pb-8 pt-5 pt-md-8">
+        <div class="container-fluid">
+            <ng-template [ngIf]="basicDisplayed">
+                <div class="card card-stats mb-6 mb-xl-0">
+                    <div class="card-body">
+                        <form [formGroup]="form" (ngSubmit)="submit()">
+                            <h6 class="heading-small text-muted mb-4">Zahtjev za kredit</h6>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-sum">Suma</label>
+                                        <input type="number" id="input-sum"
+                                            class="form-control form-control-alternative"
+                                            [formControl]="form.controls['sum']" placeholder="Suma" value="1000">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="inputGroupSelect01">Period
+                                            isplate</label>
+                                        <select class="custom-select" id="inputGroupSelect01"
+                                            [formControl]="form.controls['months']">
+                                            <option selected value="12">12</option>
+                                            <option value="24">24</option>
+                                            <option value="36">36</option>
+                                            <option value="48">48</option>
+                                            <option value="60">60</option>
+                                            <option value="72">72</option>
+                                            <option value="84">84</option>
+                                            <option value="96">96</option>
+                                            <option value="108">108</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="credit-type">Tip kredita</label>
+                                        <select class="custom-select" id="credit-type"
+                                            [formControl]="form.controls['creditType']">
+                                            <option selected value="Housing">Stambeni</option>
+                                            <option value="Investment">Investicioni</option>
+                                            <option value="Consumer">Potrosacki</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="guarantee">Garancija</label>
+                                        <select class="custom-select" id="guarantee"
+                                            [formControl]="form.controls['guaranteeType']">
+                                            <option selected value="osiguranje">Osiguranje</option>
+                                            <option value="nekretnina">Nekretnina</option>
+                                            <option value="zirant">Zirant</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="form-control-label"> </label>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary btn-lg btn-block">Dalje</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template [ngIf]="guaranteeDisplayed">
+                <div class="container-fluid mt--7">
+                    <div class="row">
+                        <div class="col-xl-8 order-xl-1">
+                            <div class="card bg-secondary shadow">
+                                <div class="card-header bg-white border-0">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <h3 class="mb-0">Informacije o nakretnini</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <form [formGroup]="formGuarantee" (ngSubmit)="submitGuarantee()">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label class="form-control-label" for="zone">Zona</label>
+                                                    <select class="custom-select" id="zone"
+                                                        [formControl]="formGuarantee.controls['zone']">
+                                                        <option selected value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label class="form-control-label" for="real-estate-type">Tip
+                                                        nekretnine</label>
+                                                    <select class="custom-select" id="real-estate-type"
+                                                        [formControl]="formGuarantee.controls['realEstateType']">
+                                                        <option selected value="Apartment">Stan</option>
+                                                        <option value="House">Kuca</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label class="form-control-label"
+                                                        for="input-square-footage">Kvadratura</label>
+                                                    <input type="number" id="input-square-footage"
+                                                        class="form-control form-control-alternative"
+                                                        [formControl]="formGuarantee.controls['inputSquareFootage']"
+                                                        placeholder="Kvadratura">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <label class="form-control-label"> </label>
+                                                <div class="text-center">
+                                                    <button type="submit"
+                                                        class="btn btn-primary btn-lg btn-block">Dodaj</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+                            <div class="card card-profile shadow">
+                                <div class="card-header border-0">
+                                    <h3 class="mb-0">Dodate nekretnine</h3>
+                                    <div class="table-responsive">
+                                        <table class="table align-items-center table-flush">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th scope="col">Zona</th>
+                                                    <th scope="col">Tip</th>
+                                                    <th scope="col">Kvadratura</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let element of realEstates">
+                                                    <td>
+                                                        {{element.zone}}
+                                                    </td>
+                                                    <td>
+                                                        {{element.realEstateType}}
+                                                    </td>
+                                                    <td>
+                                                        {{element.squareFootage}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- <div class="col-lg-6"> -->
+                                        <label class="form-control-label"> </label>
+                                        <div class="text-center">
+                                            <button type="button"
+                                                class="btn btn-primary" (click) = "checkWarrantly()">Dalje</button>
+                                        </div>
+                                    <!-- </div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br><br><br><br><br>
+            </ng-template>
+            <ng-template [ngIf]= "fullRequest">
+                <app-contract [contract] = "contract"></app-contract>
+            </ng-template>
+        </div>
+        <br><br><br><br><br>
+    </div>
+</div>

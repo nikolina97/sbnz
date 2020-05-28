@@ -39,12 +39,12 @@ export class LoginComponent implements OnInit {
 				const jwt: JwtHelperService = new JwtHelperService();
 				const info = jwt.decodeToken(result);
 				if (info.role == "ROLE_ADMIN") {
-					this.toastr.warning("You are not logged in as admin");
+					this.toastr.warning("You are logged in as admin");
 					this.router.navigate(['bank']);
 					return;
 				}
 				else{
-					this.toastr.warning("You are not logged in as client");
+					this.toastr.warning("You are logged in as client");
 					this.router.navigate(['bank-client']);
 					return;
 				}

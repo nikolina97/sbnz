@@ -16,6 +16,7 @@ import com.sbnz.bankcredit.dto.CreditRequestDTO;
 import com.sbnz.bankcredit.dto.RealEstateDTO;
 import com.sbnz.bankcredit.model.Answer;
 import com.sbnz.bankcredit.model.Client;
+import com.sbnz.bankcredit.model.Contract;
 import com.sbnz.bankcredit.model.CreditRequest;
 import com.sbnz.bankcredit.model.RealEstate;
 import com.sbnz.bankcredit.model.User;
@@ -34,10 +35,10 @@ public class CreditRequestController {
 	
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@PostMapping( value = "/basic")
-	public ResponseEntity<?> basicRulesInRequest(@RequestBody CreditRequestDTO creditReqDTO) {
-	
+	public ResponseEntity<Answer> basicRulesInRequest(@RequestBody CreditRequestDTO creditReqDTO) {
 		Answer answer = creditRequestService.checkBasicRules(creditReqDTO);
-		return new ResponseEntity<>(answer, HttpStatus.OK);
+		System.out.println(answer);
+		return new ResponseEntity<Answer>(answer, HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
@@ -45,12 +46,13 @@ public class CreditRequestController {
 	public ResponseEntity<?> warrantlyFulfillment(@RequestBody CreditRequest cr) {
 	
 		Answer answer = creditRequestService.checkwarrantlyFulfillment(cr);
+		System.out.println(answer);
 		return new ResponseEntity<>(answer, HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@PostMapping( value = "/create-contract")
-	public ResponseEntity<?> basicClientRules(@RequestBody CreditRequest cr) {
+	public ResponseEntity<?> basicClientRules(@RequestBody Contract cr) {
 		Answer answer = creditRequestService.createContract(cr);
 		return new ResponseEntity<>(answer, HttpStatus.OK);
 	}

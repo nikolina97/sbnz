@@ -72,7 +72,7 @@ rule "Zahtjev se odbija ako je kredit investicioni, a suma manja od 40 000"
 rule "Zahtjev se odbija ako je kredit potrosacki, a suma veca od 40 000"
 	agenda-group "basic req rules"
 	when
-		$cr : CreditRequest(creditType == CreditType.Consumer, sumOfMoney > 30000)
+		$cr : CreditRequest(creditType == CreditType.Consumer, sumOfMoney > 40000)
 		not(Answer(accepted == false))
 	then
         insert(new Answer(false, "Maksimalna suma za potrosacki kredit je 40 000"));
