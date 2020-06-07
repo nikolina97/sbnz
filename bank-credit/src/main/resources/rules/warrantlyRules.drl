@@ -31,7 +31,7 @@ rule "Odredi cijenu nekretnine, zona 1, tip kuca"
 		$re : RealEstate(price == 0.0, realEstateType == RealEstateType.House, zone == 1, $squareFootage : squareFootage)
 	then
 		System.out.println("Odredi cijenu nekretnine, zona 1, tip kuca");
-		double price = 1200 * $squareFootage * 1.1; 
+		double price = 1300 * $squareFootage * 1.1; 
 		modify($re){setPrice(price);}
 	end
 
@@ -41,15 +41,15 @@ rule "Odredi cijenu nekretnine, zona 2, tip kuca"
 		$re : RealEstate(price == 0.0, realEstateType == RealEstateType.House, zone == 2, $squareFootage : squareFootage)
 	then
 		System.out.println("Odredi cijenu nekretnine, zona 2, tip kuca");
-		double price = 1300 * $squareFootage * 1.1; 
+		double price = 1200 * $squareFootage * 1.1; 
 		modify($re){setPrice(price);}
 	end
 
 rule "Update warranlty"
-	salience -3
 	agenda-group "warrantly"
 	no-loop
 	when
+		not(RealEstate(price == 0.0))
 		$allRealEstates : List() from collect(RealEstate(price != 0.0))
 		$warrantly : Warrantly(realEstate != null)
 		$cr : CreditRequest (warrantly == $warrantly)
@@ -63,6 +63,7 @@ rule "Zahtjev se odbija ako nekretnine nemaju dovoljnu vrijednost"
 	salience -5
 	agenda-group "warrantly"
 	when
+		not (RealEstate(price == 0.0))
 		$cr: CreditRequest($warrantly : warrantly, $sumOfMoney : sumOfMoney)
 		Warrantly(this == $warrantly, guarantor == null, realEstate != null, insurance == false, $realEstates : realEstate)
 		Number(doubleValue < $sumOfMoney*1.2) from accumulate(
@@ -77,7 +78,7 @@ rule "Pozitivan odgovor za garanciju"
 	salience -10
 	agenda-group "warrantly"
 	when
-		not(Answer())
+		not(Answer(accepted == false))
 	then
 		System.out.println("Pozitivan odgovor za garanciju");
 		insert(new Answer(true, "Osnovni uslovi za garanciju su ispunjeni"));

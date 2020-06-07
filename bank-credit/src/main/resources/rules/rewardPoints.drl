@@ -9,7 +9,7 @@ import java.util.List;
 import com.sbnz.bankcredit.dto.ConditionDTO;
 import com.sbnz.bankcredit.dto.ContractDTO;
 
-function int greaterThan0(int numb, int cond) {
+function int greaterThan(int numb, int cond) {
 	if (numb > cond) {
 		return 1;
 	}
@@ -18,29 +18,74 @@ function int greaterThan0(int numb, int cond) {
 	}
 }
 
-function int checkPrice(double totalPrice, double loanValue) {
-	if (totalPrice >= 2*loanValue) {
+function int checkPrice(double totalPrice, double loanValue, double valueForComp) {
+	if (totalPrice >= valueForComp*loanValue) {
 		return 1;
 	}
 	else{
 		return 0;
-	}
-	
+	}	
 }
 
-//Dodati uslove za racunanje osnovne kamate
-rule 'Odrediti osnovnu kamatu'
+function int returnOppositeValue(int number) {
+	if (number == 0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+rule 'Osnovna kamatna stopa 8%'
 	salience 10
 	agenda-group "reward points"
 	no-loop
 	when
 		$contract : Contract($id : id, signed == false)	
 		not(ContractDTO())
+		$creditRequest : CreditRequest((sumOfMoney < 10000 && monthlyPaymentPeriod >= 60) 	
+		|| (sumOfMoney >= 10000 && sumOfMoney < 30000 && monthlyPaymentPeriod >= 96)
+		|| (sumOfMoney >= 30000 && sumOfMoney < 60000 && monthlyPaymentPeriod >= 120) 
+		|| (sumOfMoney >= 60000 && sumOfMoney < 100000 && monthlyPaymentPeriod >= 180)) 
 	then
-		insert (new ContractDTO($id, 2, 0)); //hard coded
-		System.out.println("Odrediti osnovnu kamatu");
+		insert (new ContractDTO($id, 8, 0)); 
+		System.out.println("Osnovna kamatna stopa 8%");
 	end
 
+rule 'Osnovna kamatna stopa 6%'
+	salience 10
+	agenda-group "reward points"
+	no-loop
+	when
+		$contract : Contract($id : id, signed == false)	
+		not(ContractDTO())
+		$creditRequest : CreditRequest((sumOfMoney < 10000 && monthlyPaymentPeriod >= 36 && monthlyPaymentPeriod < 60) 
+		|| (sumOfMoney >= 10000 && sumOfMoney < 30000 && monthlyPaymentPeriod >= 60 && monthlyPaymentPeriod < 96)
+		|| (sumOfMoney >= 30000 && sumOfMoney < 60000 && monthlyPaymentPeriod >= 96 && monthlyPaymentPeriod < 120) 
+		|| (sumOfMoney >= 60000 && sumOfMoney < 100000 && monthlyPaymentPeriod >= 120 && monthlyPaymentPeriod < 180)
+		|| (sumOfMoney >= 100000 && monthlyPaymentPeriod >= 180)) 
+	then
+		insert (new ContractDTO($id, 6, 0)); 
+		System.out.println("Osnovna kamatna stopa 6%");
+	end
+		
+rule 'Osnovna kamatna stopa 4%'
+	salience 10
+	agenda-group "reward points"
+	no-loop
+	when
+		$contract : Contract($id : id, signed == false)	
+		not(ContractDTO())
+		$creditRequest : CreditRequest((sumOfMoney < 10000 && monthlyPaymentPeriod < 36) 
+		|| (sumOfMoney >= 10000 && sumOfMoney < 30000 && monthlyPaymentPeriod < 60)
+		|| (sumOfMoney >= 30000 && sumOfMoney < 60000 && monthlyPaymentPeriod < 96) 
+		|| (sumOfMoney >= 60000 && sumOfMoney < 100000 && monthlyPaymentPeriod < 120)
+		|| (sumOfMoney >= 100000 && monthlyPaymentPeriod < 180)) 
+	then
+		insert (new ContractDTO($id, 4, 0)); 
+		System.out.println("Osnovna kamatna stopa 4%");
+	end
+	
 rule "5 bodova"
 	agenda-group "reward points"
 	salience 10
@@ -62,20 +107,15 @@ rule "5 bodova"
 				result (count)
 		)
 		$account : Number (intValue >=0) from accumulate(
-			Client( this == $client, System.currentTimeMillis() - accountOpeningDate.getTime() >= 1000*60*60*24*365*4),
-			init(int count = 0;),
-			action(count = 1;),
-			result (count)
+				Client( this == $client, System.currentTimeMillis() - accountOpeningDate.getTime() >= 1000*60*60*24*365*4),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
 		)
 		
 		$contracts : Number(intValue >=0) from accumulate(
-				Contract(active == false, signed == true, client == $client),
-				init(int count = 0; int sum = 0; ),
-				action(count += 1;
-						if (count > 1){
-							sum = 1;
-						}),
-				result (count)
+				$c : Contract(active == false, signed == true, client == $client),
+				count($c)
 		)
 		$activeContracts: Number(intValue >=0) from accumulate(
 				Contract(active == true, signed == true, client == $client),
@@ -88,18 +128,28 @@ rule "5 bodova"
 		
 		$allContracts : List() from collect(Contract(active == false, signed == true))
 		
-		$guarantee: Number(intValue >=0) from accumulate
+		$guarantor: Number(intValue >=0) from accumulate(
+				$c :  Contract(active == false, signed == true, client == $creditRequest.getWarrantly().getGuarantor()) from $allContracts,
+				count($c)
+		)
+		$realEstatesTotalValue: Number(doubleValue >=0) from accumulate
 				(
-				Contract(active == false, signed == true, client == $creditRequest.getWarrantly().getGuarantor()) from $allContracts,
-				init(int count = 0; ),
-				action(count += 1;),
+				CreditRequest(client == $client, warrantly != null, warrantly.realEstate != null, $realEstates : warrantly.realEstate),
+				init(double count = 0; ),
+				action(
+				for (Object re : $realEstates) {
+					count = count + ((RealEstate) re).getPrice();
+				}),
 				result (count)
 		)
 	then
-		int totalConditions = 6;
-		int totalPoints = 5 + $contracts.intValue() + $guarantee.intValue();
-		int completedConditions = $invHous.intValue() + $sumOfMoney.intValue() + $account.intValue() + greaterThan0($contracts.intValue(), 1) + greaterThan0($guarantee.intValue(), 0) ;
-		insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
+		int totalConditions = 7;
+		int totalPoints = 5 + $contracts.intValue() + $guarantor.intValue();
+		int completedConditions = $invHous.intValue() + $sumOfMoney.intValue() + $account.intValue() + greaterThan($contracts.intValue(), 1) +
+		$activeContracts.intValue() + greaterThan($guarantor.intValue(), 0) + checkPrice($realEstatesTotalValue.intValue(), $creditRequest.getSumOfMoney(), 2);
+		if (completedConditions >= 2){
+			insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
+		}
 		System.out.println("5 bodova");
 	end
 
@@ -124,29 +174,24 @@ rule "4 boda"
 		)
 		
 		$contracts : Number(intValue >=0) from accumulate(
-				Contract(active == false, signed == true, client == $client),
-				init(int count = 0; int sum = 0; ),
-				action(count += 1;
-						if (count > 0){
-							sum = 1;
-						}),
-				result (count)
+				$c : Contract(active == false, signed == true, client == $client),
+				count($c)
 		)
+		
 		$account : Number (intValue >=0) from accumulate(
-			Client( this == $client, System.currentTimeMillis() - accountOpeningDate.getTime() >= 1000*60*60*24*365),
-			init(int count = 0;),
-			action(count = 1;),
-			result (count)
+			Client( this == $client, System.currentTimeMillis() - accountOpeningDate.getTime() >= 1000*60*60*24*365*2),
+			init(int count = 0; ),
+				action(count = 1;),
+				result (count)
 		)
 		
 		$creditRequest : CreditRequest()
 		
 		$allContracts : List() from collect(Contract(active == false, signed == true))
 		
-		$realEstatesTotalValue: Number(doubleValue >=0) from accumulate
-				(
-				CreditRequest(client == $client, warrantly != null, warrantly.realEstate != null, $realEstates : warrantly.realEstate),
-				init(double count = 0; ),
+		$realEstatesTotalValue: Number(doubleValue >=0) from accumulate(
+		CreditRequest(client == $client, warrantly != null, warrantly.realEstate != null, $realEstates : warrantly.realEstate),
+		init(double count = 0; ),
 				action(
 				for (Object re : $realEstates) {
 					count = count + ((RealEstate) re).getPrice();
@@ -154,9 +199,9 @@ rule "4 boda"
 				result (count)
 		)
 	then
-		int totalConditions = 6;
-		int totalPoints = 5 + $contracts.intValue();
-		int completedConditions = $invHous.intValue() + $sumOfMoney.intValue() + $account.intValue() + greaterThan0($contracts.intValue(), 0) + checkPrice($realEstatesTotalValue.intValue(), $creditRequest.getSumOfMoney()) ;
+		int totalConditions = 5;
+		int totalPoints = 4 + $contracts.intValue();
+		int completedConditions = $invHous.intValue() + $sumOfMoney.intValue() + $account.intValue() + greaterThan($contracts.intValue(), 0) + checkPrice($realEstatesTotalValue.intValue(), $creditRequest.getSumOfMoney(), 1.5) ;
 		if (completedConditions >= 2){
 			insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
 		}
@@ -164,24 +209,124 @@ rule "4 boda"
 	end	
 
 rule "3 boda"
+	agenda-group "reward points"
+	salience 10
+	no-loop
 	when
-		//dodati uslove za 3 boda
+		$client : Client()
+		ContractDTO(rewardPoints == 0)
+		$consCredit : Number (intValue >= 0) from accumulate(
+				CreditRequest(client == $client, creditType == CreditType.Consumer),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
+		) 
+		$sumOfMoney :  Number (intValue >= 0) from accumulate(
+				CreditRequest(client == $client, sumOfMoney > 15000),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
+		)
+		$account : Number (intValue >=0) from accumulate(
+				Client( this == $client, System.currentTimeMillis() - accountOpeningDate.getTime() >= 1000*60*60*24*365),
+				init(int count = 0; ),
+					action(count = 1;),
+					result (count)
+		)
+		
+		$activeContracts: Number(intValue >=0) from accumulate(
+				Contract(active == true, signed == true, client == $client),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
+		)
+		
+		$guarantor: Number(intValue >=0) from accumulate(
+				$cr :  CreditRequest(client == $client, warrantly != null, warrantly.guarantor != null),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
+		)
+		
+		
 	then
-		//dodati ConditionDTO
+		int totalConditions = 5;
+		int totalPoints = 3;
+		int completedConditions = $consCredit.intValue() + $sumOfMoney.intValue() + $account.intValue() + returnOppositeValue($activeContracts.intValue()) + $guarantor.intValue() ;
+		if (completedConditions >= 2){
+			insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
+		}
+		System.out.println("3 boda " + $activeContracts.intValue());
 	end	
 
 rule "2 boda"
+	agenda-group "reward points"
+	salience 10
+	no-loop
 	when
-		//dodati uslove za 2 boda
+		$client : Client()
+		ContractDTO(rewardPoints == 0)
+		$invHous : Number (intValue >= 0) from accumulate(
+				CreditRequest(client == $client, creditType == CreditType.Housing || creditType == CreditType.Investment),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
+		) 
+		$sumOfMoney :  Number (intValue >= 0) from accumulate(
+				CreditRequest(client == $client, sumOfMoney > 35000),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
+		)
+		$account : Number (intValue >=0) from accumulate(
+				Client( this == $client, System.currentTimeMillis() - accountOpeningDate.getTime() >= 1000*60*60*24*365),
+				init(int count = 0; ),
+					action(count = 1;),
+					result (count)
+		)
 	then
-		//dodati ConditionDTO
+		int totalConditions = 3;
+		int totalPoints = 2;
+		int completedConditions = $invHous.intValue() + $sumOfMoney.intValue() + $account.intValue();
+		if (completedConditions >= 2){
+			insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
+		}
+		System.out.println("2 boda ");
 	end
 
 rule "1 bod"
+	agenda-group "reward points"
+	salience 10
+	no-loop
 	when
-		//dodati uslove za 1 bod
+		$client : Client()
+		ContractDTO(rewardPoints == 0)
+		$sumOfMoney :  Number (intValue >= 0) from accumulate(
+				CreditRequest(client == $client, sumOfMoney > 10000),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
+		)
+		$activeContracts: Number(intValue >=0) from accumulate(
+				Contract(active == true, signed == true, client == $client),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
+		)
+		$guarantorRe: Number(intValue >=0) from accumulate(
+				$cr :  CreditRequest(client == $client, warrantly != null, warrantly.insurance == false),
+				init(int count = 0; ),
+				action(count = 1;),
+				result (count)
+		)
 	then
-		//dodati ConditionDTO
+		int totalConditions = 3;
+		int totalPoints = 1;
+		int completedConditions = returnOppositeValue($activeContracts.intValue()) + $sumOfMoney.intValue() + $guarantorRe.intValue();
+		if (completedConditions >= 2){
+			insert(new ConditionDTO(totalPoints, totalConditions, completedConditions));
+		}
+		System.out.println("1 bod ");
 	end		
 	
 
@@ -194,12 +339,18 @@ rule "Dodaj dodatne bodove"
 		$client : Client()
 		$total :  Number (intValue > 0) from accumulate(
 				ConditionDTO($totalPoints : totalPoints, $percent : percent),
-				init(int count = 0; double perc = 0;),
+				init(int count = 0; double perc = 0; boolean greaterThan50 = false),
 				action(
-					if ($percent > perc){
+					if (greaterThan50 == false && $percent > perc && $percent < 50){
 						perc = $percent; count = $totalPoints;
 					}
-					else if ($percent == perc) {
+					else if ($percent >= 50) {
+						greaterThan50 = true;
+						if ($totalPoints > count) {
+							count = $totalPoints;
+						}
+					}
+					else if (greaterThan50 == true) {
 						if ($totalPoints > count) {
 							count = $totalPoints;
 						}
@@ -232,7 +383,7 @@ rule "Kamata se umanjuje za 5% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 1);}
-		System.out.println($contract.getInterest());
+		System.out.println("5% " + $contract.getInterest());
 		
 	end
 
@@ -253,7 +404,7 @@ rule "Kamata se umanjuje za 20% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 1);}
-		System.out.println($contract.getInterest());
+		System.out.println("20% " + $contract.getInterest());
 	end
 
 rule "Kamata se umanjuje za 30% i racuna se mjesecna rata"
@@ -273,7 +424,7 @@ rule "Kamata se umanjuje za 30% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 2);}
-		System.out.println($contract.getInterest());
+		System.out.println("30% " + $contract.getInterest());
 	end	
 
 rule "Kamata se umanjuje za 40% i racuna se mjesecna rata"
@@ -293,6 +444,6 @@ rule "Kamata se umanjuje za 40% i racuna se mjesecna rata"
 		modify($contract) {setMonthlyPayment(paymentMonthly);}
 		modify($contract) {setRemainingSum(totalSum);}
 		modify($client) {setRewardPoints($client.getRewardPoints() - 5);}
-		System.out.println($contract.getInterest());
+		System.out.println("40% " + $contract.getInterest());
 	end
 

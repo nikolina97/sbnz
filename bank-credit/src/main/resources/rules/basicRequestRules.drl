@@ -6,7 +6,7 @@ import com.sbnz.bankcredit.model.CreditType;
 import com.sbnz.bankcredit.model.Contract;
 import com.sbnz.bankcredit.model.Client;
 	
-rule "Zahtjev se ne prihvata ako je suma veca od 300 000"
+rule "Zahtjev se odbija ako je suma veca od 300 000"
 	agenda-group "basic req rules"
 	when
 		not(Answer(accepted == false))
@@ -102,16 +102,12 @@ rule "Zahtjev se odbija ako klijent ima vise od 1 stambenog ili investicionog kr
 		not(Answer(accepted == false))
 		$client : Client()
 		$total1 : Number(intValue >1) from accumulate(
-				Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Housing || creditRequest.creditType == CreditType.Investment),
-				init(int count = 0; ),
-				action(count += 1;),
-				result (count)
+				$contract: Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Housing || creditRequest.creditType == CreditType.Investment),
+				count($contract)
 		)
 		$total2 : Number(intValue > 1) from accumulate(
-				Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Consumer),
-				init(int count_ = 0; ),
-				action(count_ += 1;),
-				result (count_)
+				$contract_ : Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Consumer),
+				count($contract_)
 		)
 	then
 		insert(new Answer(false, "Zahtjev se odbija jer vec imate vise od 1 stambenog ili investicionog i vise od 2 potrosacka aktivna kredita "));
@@ -123,10 +119,8 @@ rule "Zahtjev se odbija ako klijent ima vise od 2 stambena ili investiciona kred
 		not(Answer(accepted == false))
 		$client : Client()
 		$total : Number(intValue >2) from accumulate(
-				Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Housing || creditRequest.creditType == CreditType.Investment),
-				init(int count = 0; ),
-				action(count += 1;),
-				result (count)
+				$contract : Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Housing || creditRequest.creditType == CreditType.Investment),
+				count($contract)
 		)
 	then
 		insert(new Answer(false, "Zahtjev se odbija jer vec imate vise od 2 stambena ili investiciona aktivna kredita "));
@@ -138,10 +132,8 @@ rule "Zahtjev se odbija ako klijent ima vise od 3 aktivna potrosacka kredita"
 		not(Answer(accepted == false))
 		$client : Client()
 		$total : Number(intValue >3) from accumulate(
-				Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Consumer),
-				init(int count = 0; ),
-				action(count += 1;),
-				result (count)
+				$contract : Contract(active == true, signed == true, client == $client, creditRequest.creditType == CreditType.Consumer),
+				count($contract)
 		)
 	then
 		insert(new Answer(false, "Zahtjev se odbija jer vec imate vise od 3 aktivna potrosacka kredita "));

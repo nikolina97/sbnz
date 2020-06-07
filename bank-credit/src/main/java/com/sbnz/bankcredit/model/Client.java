@@ -11,15 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@Entity  
-@Table(name="client")  
-//@AttributeOverrides({  
-//    @AttributeOverride(name="id", column=@Column(name="id")),  
-//    @AttributeOverride(name="username", column=@Column(name="username")),
-//    @AttributeOverride(name="password", column=@Column(name="password")),
-//    @AttributeOverride(name="first_name", column=@Column(name="first_name")),
-//    @AttributeOverride(name="last_name", column=@Column(name="last_name")),
-//}) 
+@Entity
 public class Client extends User{
 	
 	/**

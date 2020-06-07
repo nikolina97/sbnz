@@ -1,2 +1,5 @@
-<p>bank works!</p>
-<button class="btn btn-round" style="background-color: purple;" (click)="logout()">Logout</button>
+<app-sidebar></app-sidebar>
+<div class="main-content">
+    <!-- <button class="btn btn-round" style="background-color: purple;" (click)="logout()">Logout</button> -->
+    <router-outlet name = "main"></router-outlet>
+</div>

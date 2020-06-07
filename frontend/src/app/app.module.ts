@@ -16,6 +16,10 @@ import { LoginComponent } from './pages/login/login.component';
 import { BankComponent } from './pages/bank/bank.component';
 import { BankClientComponent } from './pages/bank-client/bank-client.component';
 import { ContractComponent } from './pages/contract/contract.component';
+import { ClientsComponent } from './pages/clients/clients.component';
+import { CreditRequestComponent } from './pages/credit-request/credit-request.component';
+import { AccountsComponent } from './pages/accounts/accounts.component';
+import { NewClientComponent } from './pages/clients/new-client/new-client.component';
 
 @NgModule({
   imports: [
@@ -37,7 +41,11 @@ import { ContractComponent } from './pages/contract/contract.component';
     LoginComponent,
     BankComponent,
     BankClientComponent,
-    ContractComponent
+    ContractComponent,
+    ClientsComponent,
+    CreditRequestComponent,
+    AccountsComponent,
+    NewClientComponent
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true }],
   bootstrap: [AppComponent]

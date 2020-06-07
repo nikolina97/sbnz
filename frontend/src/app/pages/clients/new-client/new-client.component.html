@@ -1,0 +1,94 @@
+    <div class="bg-gradient-danger pb-8 pt-5 pt-md-6">
+        <div class="container-fluid">
+            
+                <div class="card card-stats mb-6 mb-xl-0">
+                    <div class="card-body">
+                        <form (ngSubmit)="addClient()" [formGroup]="form">
+                            <h6 class="heading-small text-muted mb-4">Novi klijent</h6>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-firstName">Ime</label>
+                                        <input type="text" id="input-firstName"
+                                            class="form-control form-control-alternative"
+                                            placeholder="Ime" [formControl]="form.controls['firstName']" ng-required="true" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-lastName">Prezime</label>
+                                        <input type="text" id="input-lastName"
+                                            class="form-control form-control-alternative"
+                                            placeholder="Prezime" [formControl]="form.controls['lastName']" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-username">Korisničko ime</label>
+                                        <input type="text" id="input-username"
+                                            class="form-control form-control-alternative"
+                                            placeholder="Korisničko ime" [formControl]="form.controls['username']" required>
+                                    </div>
+                                </div> 
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-password">Lozinka</label>
+                                        <input type="password" id="input-password"
+                                            class="form-control form-control-alternative"
+                                            placeholder="Lozinka" [formControl]="form.controls['password']" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-birthday">Datum rođenja</label>
+                                        <input type="date" id="input-birthday"
+                                            class="form-control form-control-alternative"
+                                            placeholder="Datum rođenja" [formControl]="form.controls['dateOfBirth']" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-jmbg">Matični broj</label>
+                                        <input type="text" id="input-jmbg"
+                                            class="form-control form-control-alternative"
+                                            placeholder="Jmbg" [formControl]="form.controls['jmbg']" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-acc">Broj računa</label>
+                                        <input type="text" id="input-acc"
+                                            class="form-control form-control-alternative"
+                                            placeholder="Broj računa" [formControl]="form.controls['accountNumber']" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-income">Mjesečna primanja (u evrima)</label>
+                                        <input type="number" id="input-income"
+                                            class="form-control form-control-alternative"
+                                            placeholder="Mjesečna primanja" [formControl]="form.controls['monthlyIncome']" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-outcome">Mjesečni izdaci (u evrima)</label>
+                                        <input type="number" id="input-outcome"
+                                            class="form-control form-control-alternative"
+                                            placeholder="Mjesečni izdaci" [formControl]="form.controls['monthlyOutcome']" required>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <br>
+                                    <button type="submit"
+                                        class="btn btn-success btn-lg">Dodaj klijenta</button>
+                                </div>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            
+        </div>
+        <br><br><br><br><br>
+    </div>

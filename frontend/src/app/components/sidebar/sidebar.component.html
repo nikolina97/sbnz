@@ -1,40 +1,71 @@
 <nav class="navbar navbar-vertical navbar-expand-md navbar-light bg-white" id="sidenav-main">
-    <div class="container-fluid">
-      <button class="navbar-toggler" type="button" (click)="isCollapsed=!isCollapsed"
-       aria-controls="sidenav-collapse-main">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" (click)="isCollapsed=!isCollapsed"
+      aria-controls="sidenav-collapse-main">
       <span class="navbar-toggler-icon"></span>
     </button>
-      <!-- Brand -->
-      <a class="navbar-brand pt-0" routerLinkActive="active" [routerLink]="['/bank-client']">
-        <img src="./assets/img/brand/red.png" class="navbar-brand-img" alt="...">
-      </a>
-      <div class="collapse navbar-collapse"  [ngbCollapse]="isCollapsed" id="sidenav-collapse-main">
-        <!-- Navigation -->
-        <ul class="navbar-nav">
-            <li class = "nav-item">
-                <a routerLinkActive="active" [routerLink]="bank-client" class = "nav-link">
-                  <i class="ni ni-tv-2 text-primary"></i>  
-                  Zahtev za kredit
-                </a>
+    <!-- Brand -->
+    <a class="navbar-brand pt-0" routerLinkActive="active" [routerLink]="['/bank-client']">
+      <img src="./assets/img/brand/red.png" class="navbar-brand-img" alt="...">
+    </a>
+    <div class="collapse navbar-collapse" [ngbCollapse]="isCollapsed" id="sidenav-collapse-main">
+      <ng-template [ngIf]="clientRole" [ngIfElse]="adminRole">
+        <div>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a routerLinkActive="active" [routerLink]="[{ outlets: { main: ['credit-request'] } }]" class="nav-link">
+                <i class="ni ni-tv-2 text-primary"></i>
+                  Zahtjev za kredit
+              </a>
             </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class = "nav-item">
-              <a routerLinkActive="active" [routerLink]="bank-client" class = "nav-link">
-                <i class="ni ni-tv-2 text-primary"></i>  
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a routerLinkActive="active" [routerLink]="[{ outlets: { main: ['accounts'] } }]" class="nav-link">
+                <i class="ni ni-tv-2 text-primary"></i>
                 Pregled racuna
               </a>
-          </li>
-      </ul>
-      <ul class="navbar-nav">
-        <li class = "nav-item">
-            <a routerLinkActive="active" [routerLink]="bank-client" class = "nav-link">
-              <i class="ni ni-tv-2 text-primary"></i>  
-              Prethodne aktivnosti
-            </a>
-        </li>
-    </ul>
-      </div>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a routerLinkActive="active" [routerLink]="bank-client" class="nav-link">
+                <i class="ni ni-tv-2 text-primary"></i>
+                Prethodne aktivnosti
+              </a>
+            </li>
+          </ul>
+        </div>
+      </ng-template>
+
+      <ng-template #adminRole>
+        <div>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a routerLinkActive="active" [routerLink]="{ outlets: { main: ['clients'] } }" class="nav-link">
+                <i class="ni ni-tv-2 text-primary"></i>
+                  Klijenti
+              </a>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a routerLinkActive="active" [routerLink]="bank" class="nav-link">
+                <i class="ni ni-tv-2 text-primary"></i>
+                Krediti
+              </a>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a routerLinkActive="active" [routerLink]="bank" class="nav-link">
+                <i class="ni ni-tv-2 text-primary"></i>
+                Izvještaj
+              </a>
+            </li>
+          </ul>
+        </div>
+      </ng-template>
     </div>
-  </nav>
-  
+  </div>
+</nav>
