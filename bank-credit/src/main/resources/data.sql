@@ -9,9 +9,14 @@ INSERT INTO `authorities` VALUES (1,'ROLE_ADMIN'), (2, 'ROLE_CLIENT');
 UNLOCK TABLES;
 
 --
--- Dumping data for table `hibernate_sequence`
+-- Dumping data for table `account`
 --
 
+LOCK TABLES `account` WRITE;
+/*!40000 ALTER TABLE `account` DISABLE KEYS */;
+INSERT INTO `account` VALUES (1,'123-32-333', 676), (2, '123-123-123-0', 1800);
+/*!40000 ALTER TABLE `account` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `user`
@@ -20,20 +25,11 @@ UNLOCK TABLES;
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user`(dtype, id, first_name, last_name, password, username) VALUES ('Admin', 1,'Marko','Markovic','$2a$04$CKjDkEtBltT5FYXDl2vM.uUxuTDE7oT2eqlHnzqE7SWQ6IVJC2Tri','marko');
---INSERT INTO `user`(dtype, id, first_name, last_name, password, username, account_opening_date) VALUES ('Client', 2,'Jovan','Jankovic','$2a$04$CKjDkEtBltT5FYXDl2vM.uUxuTDE7oT2eqlHnzqE7SWQ6IVJC2Tri','jovan', '2017-03-04');
+INSERT INTO `user`(dtype, id, first_name, last_name, password, username, account_opening_date, date_of_birth, jmbg, monthly_income, monthly_outcome, reward_points, account_id) 
+VALUES ('Client', 2,'Jovan','Jankovic','$2a$04$CKjDkEtBltT5FYXDl2vM.uUxuTDE7oT2eqlHnzqE7SWQ6IVJC2Tri','jovan', '2017-03-04', '1977-03-04', 020202020, 2000, 0, 0, 1);
 --(3,'Dejan','Jankovic','$2a$04$CKjDkEtBltT5FYXDl2vM.uUxuTDE7oT2eqlHnzqE7SWQ6IVJC2Tri','dejan'), (4,'Dragan','Jankovic','$2a$04$CKjDkEtBltT5FYXDl2vM.uUxuTDE7oT2eqlHnzqE7SWQ6IVJC2Tri','dragan'), (5,'Jelena','Jankovic','$2a$04$CKjDkEtBltT5FYXDl2vM.uUxuTDE7oT2eqlHnzqE7SWQ6IVJC2Tri','jelena');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping data for table `account`
---
-
---LOCK TABLES `account` WRITE;
---/*!40000 ALTER TABLE `account` DISABLE KEYS */;
---INSERT INTO `account` VALUES (1,'123-32-333', 676), (2, '123-123-123-0', 1800);
---/*!40000 ALTER TABLE `account` ENABLE KEYS */;
---UNLOCK TABLES;
 
 --
 -- Dumping data for table `client`
@@ -54,7 +50,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `user_authority` WRITE;
 /*!40000 ALTER TABLE `user_authority` DISABLE KEYS */;
-INSERT INTO `user_authority` VALUES (1,1);
+INSERT INTO `user_authority` VALUES (1,1), (2,2);
 /*!40000 ALTER TABLE `user_authority` ENABLE KEYS */;
 UNLOCK TABLES;
 

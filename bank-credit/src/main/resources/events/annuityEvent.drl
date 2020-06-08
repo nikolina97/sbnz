@@ -1,0 +1,23 @@
+import com.sbnz.bankcredit.events.AnnuityEvent
+import com.sbnz.bankcredit.model.Account
+import com.sbnz.bankcredit.events.ClientWarningEvent
+
+rule "anuitet - podizanje novca u iznosu mjesecne rate"
+	when
+		$annuity : AnnuityEvent($accountNumber : accountNumber, $loanInstallment : loanInstallment, $username : username, doneAnnuity == false)
+		not(ClientWarningEvent(username == $username))
+		$account : Account (accountNumber == $accountNumber, balance >= $loanInstallment, $balance : balance)
+	then
+		modify($account){setBalance($balance - $loanInstallment);}
+		modify($annuity){setDoneAnnuity(true);}
+	end
+
+
+rule "korisnik nema dovoljno na racunu"
+	no-loop
+	when
+		$annuity : AnnuityEvent($accountNumber : accountNumber, $loanInstallment : loanInstallment, $username : username, doneAnnuity == false)
+		$account : Account (accountNumber == $accountNumber, balance < $loanInstallment, $balance : balance)
+	then
+		insert (new ClientWarningEvent($username, "Klijent nema dovoljnu sumu novca u dogovorenom terminu"));
+	end

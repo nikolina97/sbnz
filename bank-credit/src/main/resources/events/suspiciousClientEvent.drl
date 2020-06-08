@@ -1,0 +1,116 @@
+import com.sbnz.bankcredit.events.LoginEvent
+import com.sbnz.bankcredit.events.SuspiciousUserEvent
+import com.sbnz.bankcredit.events.ClientWarningEvent
+import com.sbnz.bankcredit.events.TransactionEvent
+import com.sbnz.bankcredit.events.RaisingMoneyEvent
+
+rule "3 puta pogresna lozinka u zadnjih 5 minuta za isti username"
+	when
+		$loginEvent: LoginEvent($username : username, successfull == false)
+		$n : Number(intValue >= 2) from accumulate(
+            $loginEvent2: LoginEvent(
+                this != $loginEvent, 
+                username == $username,
+                successfull == false, 
+                this meets[5m] $loginEvent
+            ),
+            count($loginEvent2)
+        )
+        not(SuspiciousUserEvent(username == $username, description == "3 puta pogresna lozinka u zadnjih 5 minuta"))
+	then
+		insert (new SuspiciousUserEvent($username, "3 puta pogresna lozinka u zadnjih 5 minuta"));
+		System.out.println("1");
+	end
+
+rule "U zadnjih godinu dana klijentu poslata 3 ili vise upozorenja"
+	when
+		ClientWarningEvent ($username : username)
+		$n : Number ( intValue >= 3) from accumulate (
+			$clientWarningEvent : ClientWarningEvent (
+				username == $username 
+			) 
+			over window:time(365d),
+			count($clientWarningEvent)	
+		)	
+		not (SuspiciousUserEvent(username == $username, description == "Klijent je u zadnjih godinu dana kasnio 3 ili vise puta sa uplatom"))
+	then
+		insert (new SuspiciousUserEvent($username, "Klijent je u zadnjih godinu dana kasnio 3 ili vise puta sa uplatom"));
+		System.out.println("2");
+	end
+
+rule "korisnik izvrsio u jednom danu vise od 3 transakcije ciji je ukupni iznos veci od 3000 evra"
+	no-loop
+	when
+		$trancationEvent : TransactionEvent ($accountNumberFrom : accountNumberFrom, $totalAmount : totalAmount, $username: username)
+		$sum : Number(doubleValue > 3000 - $totalAmount) from accumulate (
+			$transaction : TransactionEvent (
+				this != $trancationEvent,
+				accountNumberFrom == $accountNumberFrom,
+				$totalAmount_ : totalAmount,
+				this meets[1d] $trancationEvent
+			),
+			sum($totalAmount_)
+		)
+		not (SuspiciousUserEvent(username == $username, description == "Klijent je u jednom danu izvrsio 3 ili vise transakcija ciji je ukupni iznos veci od 3000 evra"))
+	then
+		insert (new SuspiciousUserEvent($username, "Klijent je u jednom danu izvrsio 3 ili vise transakcija ciji je ukupni iznos veci od 3000 evra"));
+		System.out.println("3");
+	end
+
+rule "korisnik je u sat vremena 3 puta podigao iznos veci od 500 evra pojedinacno"
+	no-loop
+	when
+		$raisingEvent : RaisingMoneyEvent ($accountNumber : accountNumber, amount >= 500 , $username : username)
+		$count : Number(intValue >= 2) from accumulate (
+			$raising : RaisingMoneyEvent (
+				this != $raisingEvent,
+				accountNumber == $accountNumber,
+				amount >= 500,
+				this meets[1h] $raisingEvent
+			),
+			count($raising)
+		)
+		not (SuspiciousUserEvent(username == $username, description == "Klijent je u sat vremena 3 puta podigao iznos veci od 500 evra pojedinacno"))
+
+	then
+		insert (new SuspiciousUserEvent($username, "Klijent je u sat vremena 3 puta podigao iznos veci od 500 evra pojedinacno"));
+		System.out.println("4");
+	end
+
+rule "korisnik je u poslednjih 20 minuta podigao sa racuna sumu vecu od 1000 evra i u poslednjih sat izvrsio transakcije vece od 1000 evra"
+	no-loop
+	when
+		
+		$raisingEvent : RaisingMoneyEvent ($accountNumber : accountNumber, $username : username)
+		$trancationEvent : TransactionEvent (accountNumberFrom == $accountNumber, username == $username )
+		
+		$sum1 : Number(doubleValue > 1000) from accumulate (
+			$raising : RaisingMoneyEvent (
+				accountNumber == $accountNumber,
+				$amount_: amount
+			) 
+			over window:time(20m),
+			sum($amount_)
+		)
+		
+		$sum2 : Number(doubleValue > 1000) from accumulate (
+			$transaction : TransactionEvent (
+				accountNumberFrom == $accountNumber,
+				$totalAmount_: totalAmount
+			)
+			over window:time(1h),
+			sum($totalAmount_)
+		)
+		not (SuspiciousUserEvent(username == $username, description == "Klijent je u poslednjih 20 minuta podigao sa racuna sumu vecu od 1000 evra i u poslednjih sat izvrsio transakcije vece od 1000 evra"))		
+	then
+		insert (new SuspiciousUserEvent($username, "Klijent je u poslednjih 20 minuta podigao sa racuna sumu vecu od 1000 evra i u poslednjih sat izvrsio transakcije vece od 1000 evra"));
+		System.out.println("5");
+	end
+
+rule "Uspjesna prijava"
+	when
+		$loginEvent: LoginEvent($username : username, successfull == true)
+        not(SuspiciousUserEvent(username == $username, description == "3 puta pogresna lozinka u zadnjih 5 minuta"))
+	then
+		System.out.println("Uspjesna prijava");
+	end
