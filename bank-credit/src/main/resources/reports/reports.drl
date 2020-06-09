@@ -1,0 +1,102 @@
+import com.sbnz.bankcredit.dto.CreditTypeNumberDTO
+import com.sbnz.bankcredit.dto.CreditCountDTO
+import com.sbnz.bankcredit.dto.ContractList
+import com.sbnz.bankcredit.dto.ActiveClientsDTO
+import com.sbnz.bankcredit.model.Contract
+import com.sbnz.bankcredit.model.Client
+import com.sbnz.bankcredit.model.CreditType
+import java.util.List
+import java.util.ArrayList
+
+rule "broj kredita grupisani po tipovima"
+	no-loop
+	when
+		not(CreditTypeNumberDTO())
+		$allContracts : List() from collect(Contract(signed == true))
+		$housingCreditList : List() from accumulate (
+			$c : Contract(creditRequest.creditType == CreditType.Housing) from $allContracts,
+				collectList($c)
+			)
+		$investmentCreditList : List() from accumulate (
+			$c1 : Contract(creditRequest.creditType == CreditType.Investment) from $allContracts,
+				collectList($c1)
+			)
+		$consumerCreditList : List() from accumulate (
+			$c2 : Contract(creditRequest.creditType == CreditType.Consumer) from $allContracts,
+				collectList($c2)
+			)
+	then
+		int hCount = $housingCreditList.size();
+		CreditTypeNumberDTO housing = new CreditTypeNumberDTO(hCount, CreditType.Housing);
+		int iCount = $investmentCreditList.size();
+		CreditTypeNumberDTO investment = new CreditTypeNumberDTO(iCount, CreditType.Investment);
+		int cCount = $consumerCreditList.size();
+		CreditTypeNumberDTO consumer = new CreditTypeNumberDTO(cCount, CreditType.Consumer);
+		List<CreditTypeNumberDTO> crList = new ArrayList<CreditTypeNumberDTO>();
+		crList.add(housing);
+		crList.add(investment);
+		crList.add(consumer);
+		insert (new CreditCountDTO(crList));
+	end
+
+rule "Najveci aktivni kredit"
+	no-loop
+	when
+		not (ContractList(max == true))
+		$activeContracts : List() from collect(Contract(signed == true, active == true))
+		$maxSum : Number(doubleValue > 0) from accumulate (
+			$c : Contract($sumOfMoney : creditRequest.sumOfMoney) from $activeContracts,
+			max($sumOfMoney)
+		)
+		$maxContracts : List() from collect(Contract(signed == true, active == true, creditRequest.sumOfMoney == $maxSum))
+	then
+		insert (new ContractList($maxContracts, true));
+	end
+
+rule "Najmanji aktivni kredit"
+	no-loop
+	when
+		not (ContractList(max == false))
+		$activeContracts : List() from collect(Contract(signed == true, active == true))
+		$minSum : Number(doubleValue > 0) from accumulate (
+			$c : Contract($sumOfMoney : creditRequest.sumOfMoney) from $activeContracts,
+			min($sumOfMoney)
+		)
+		$minContracts : List() from collect(Contract(signed == true, active == true, creditRequest.sumOfMoney == $minSum))
+	then
+		insert (new ContractList($minContracts, false));
+	end
+
+rule "najaktivniji klijenti - 15+ bodova i 2 kredita u zadnjih 5 godina"
+	no-loop
+	when
+		$activeClients : ActiveClientsDTO()
+		$client : Client (rewardPoints >= 15, $jmbg : jmbg)
+		$creditCount : Number(intValue >= 2) from accumulate( 
+			$contract : Contract(client == $client, System.currentTimeMillis() - signingDate.getTime() >= 1000*60*60*24*365*5),
+			count($contract)
+		)
+		$added : Number(intValue == 0) from accumulate (
+			$addedClient : Client(jmbg == $jmbg),
+			count ($addedClient)
+		)
+	then
+		modify($activeClients) {getClients().add($client);}
+	end
+
+rule "najaktivniji klijenti - u 4 godine suma veca ili jednaka 50 000 evra i racun otvoren 5 ili vise godina"
+	no-loop
+	when
+		$activeClients : ActiveClientsDTO()
+		$client : Client (System.currentTimeMillis() - accountOpeningDate.getTime() >= 1000*60*60*24*365*5, $jmbg : jmbg)
+		$creditSum : Number(doubleValue >= 50000) from accumulate( 
+			$contract : Contract(client == $client, System.currentTimeMillis() - signingDate.getTime() >= 1000*60*60*24*365*4, $sumOfMoney : sumOfMoney),
+			sum($sumOfMoney)
+		)
+		$added : Number(intValue == 0) from accumulate (
+			$addedClient : Client(jmbg == $jmbg),
+			count ($addedClient)
+		)
+	then
+		modify($activeClients) {getClients().add($client);}
+	end

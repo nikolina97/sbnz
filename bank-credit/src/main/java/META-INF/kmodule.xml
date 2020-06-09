@@ -5,6 +5,10 @@
         <ksession name="rulesSession"/>
     </kbase>
    
+   <kbase name="reportRules" packages="reports">
+        <ksession name="reportsSession"/>
+    </kbase>
+   
    <kbase name="cepConfigKbase" eventProcessingMode="stream" packages="events">
 		<ksession name="kSessionPseudoClock" clockType="pseudo"/>
 		<ksession name="kSessionRealTimeClock" clockType="realtime"/>
