@@ -7,11 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sbnz.bankcredit.dto.ContractDTO;
 import com.sbnz.bankcredit.dto.ContractInfoDTO;
+import com.sbnz.bankcredit.model.Contract;
 import com.sbnz.bankcredit.service.ContractService;
 
 @RestController
@@ -24,6 +26,11 @@ public class ContractController {
 	@GetMapping("/all")
 	public ResponseEntity<List<ContractInfoDTO>> getAllContracts() {
 		return new ResponseEntity<>(contractService.getAllContracts(), HttpStatus.OK);
+	}
+	
+	@PostMapping("/addContract")
+	public ResponseEntity<?> addContract(@RequestBody Contract contract){
+		return new ResponseEntity<>(contractService.addContract(contract), HttpStatus.OK);
 	}
 
 }

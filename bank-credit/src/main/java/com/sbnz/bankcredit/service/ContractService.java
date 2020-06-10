@@ -29,4 +29,9 @@ public class ContractService {
 		return credits;
 	}
 
+	public boolean addContract(Contract contract) {
+		contractRepository.save(contract);
+		return true;
+	}
+
 }
