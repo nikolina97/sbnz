@@ -23,7 +23,7 @@ public class Contract {
 	@Column(name = "id")
 	private long id;
 	
-	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER)
+	@OneToOne(cascade = { CascadeType.ALL, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	@JoinColumn(name = "credit_request_id")
 	private CreditRequest creditRequest;
 	

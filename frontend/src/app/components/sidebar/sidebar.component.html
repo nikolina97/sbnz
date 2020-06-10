@@ -35,6 +35,14 @@
               </a>
             </li>
           </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a routerLinkActive="active" (click) = "logout()" [routerLink]="bank-client" class="nav-link">
+                <i class="ni ni-tv-2 text-primary"></i>
+                Odjavi se
+              </a>
+            </li>
+          </ul>
         </div>
       </ng-template>
 
@@ -61,6 +69,14 @@
               <a routerLinkActive="active" [routerLink]="bank" class="nav-link">
                 <i class="ni ni-tv-2 text-primary"></i>
                 Izvještaj
+              </a>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a routerLinkActive="active" (click) = "logout()" [routerLink]="bank-client" class="nav-link">
+                <i class="ni ni-tv-2 text-primary"></i>
+                Odjavi se
               </a>
             </li>
           </ul>

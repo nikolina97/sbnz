@@ -37,7 +37,7 @@ public class CreditRequest {
 	@Column(name = "credit_type")
 	private CreditType creditType;
 	
-	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = { CascadeType.ALL, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "warrantly_id")
 	private Warrantly warrantly;
 

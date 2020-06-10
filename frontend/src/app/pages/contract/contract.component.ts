@@ -1,6 +1,8 @@
 import { Component, OnInit,Input, Output, EventEmitter } from '@angular/core';
 import { CreditRequestService } from '../../services/credit-request.service';
 import { ToastrService } from 'ngx-toastr';
+import { ContractService } from 'src/app/services/contract.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-contract',
@@ -16,7 +18,8 @@ export class ContractComponent implements OnInit {
   showRequest = true;
   showContract = false;
 
-  constructor(private creditRequestService : CreditRequestService, private toastr: ToastrService) { }
+  constructor(private creditRequestService : CreditRequestService, private toastr: ToastrService, 
+    private contractService : ContractService, private router : Router) { }
 
   ngOnInit(): void {
   }
@@ -33,5 +36,20 @@ export class ContractComponent implements OnInit {
         console.log(error);
       }
     )
+  }
+
+  addContract(){
+    this.contractService.addContract(this.contract).subscribe(
+      (result) => {
+        console.log(result);
+        if (result == true) {
+          window.location.reload();
+        }
+      }
+    )
+  }
+
+  back(){
+    window.location.reload();
   }
 }
