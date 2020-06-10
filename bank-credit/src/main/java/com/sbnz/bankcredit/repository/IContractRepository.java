@@ -11,4 +11,5 @@ import com.sbnz.bankcredit.model.Contract;
 public interface IContractRepository extends JpaRepository<Contract, Long>{
 	
 	Collection<Contract> findAllByClient(Client client);
+	Collection<Contract> findAllBySigned (Boolean signed);
 }

@@ -2,7 +2,12 @@ package com.sbnz.bankcredit.reports;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 
 import org.drools.core.ClassObjectFilter;
 import org.junit.Test;
@@ -12,9 +17,6 @@ import org.kie.api.runtime.KieSession;
 
 import com.sbnz.bankcredit.dto.ContractList;
 import com.sbnz.bankcredit.dto.CreditCountDTO;
-import com.sbnz.bankcredit.dto.CreditTypeNumberDTO;
-import com.sbnz.bankcredit.events.ClientWarningEvent;
-import com.sbnz.bankcredit.model.Answer;
 import com.sbnz.bankcredit.model.Contract;
 import com.sbnz.bankcredit.model.CreditRequest;
 import com.sbnz.bankcredit.model.CreditType;
@@ -55,54 +57,82 @@ public class CreditTypeNumberTest {
 		cr6.setCreditType(CreditType.Housing);
 		cr6.setSumOfMoney(90000);
 		
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
+		Date sDate1 = null;
+		Date sDate2 = null;
+		Date sDate3 = null;
+		Date sDate4 = null;
+		Date sDate5 = null;
+		Date sDate6 = null;
+		try {
+			sDate1 = formatter.parse("09/06/2018 12:00:00");
+			sDate2 = formatter.parse("09/06/2019 12:00:00");
+			sDate3 = formatter.parse("03/01/2020 12:00:00");
+			sDate4 = formatter.parse("09/03/2014 12:00:00");
+			sDate5 = formatter.parse("19/04/2017 12:00:00");
+			sDate6 = formatter.parse("19/04/2016 12:00:00");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		Contract c1 = new Contract();
 		c1.setCreditRequest(cr1);
 		c1.setSigned(true);
 		c1.setActive(true);
+		c1.setSigningDate(new Timestamp(sDate1.getTime()));
 		ksession.insert(c1);
 		
 		Contract c2 = new Contract();
 		c2.setCreditRequest(cr2);
 		c2.setSigned(true);
 		c2.setActive(true);
+		c2.setSigningDate(new Timestamp(sDate2.getTime()));
 		ksession.insert(c2);
 		
 		Contract c3 = new Contract();
 		c3.setCreditRequest(cr3);
 		c3.setSigned(true);
+		c3.setSigningDate(new Timestamp(sDate3.getTime()));
 		ksession.insert(c3);
 		
 		Contract c4 = new Contract();
 		c4.setCreditRequest(cr4);
 		c4.setSigned(true);
 		c4.setActive(true);
+		c4.setSigningDate(new Timestamp(sDate4.getTime()));
 		ksession.insert(c4);
 		
 		Contract c5 = new Contract();
 		c5.setCreditRequest(cr5);
 		c5.setSigned(true);
+		c5.setSigningDate(new Timestamp(sDate5.getTime()));
 		ksession.insert(c5);
 		
 		Contract c6 = new Contract();
 		c6.setCreditRequest(cr6);
 		c6.setSigned(true);
 		c6.setActive(true);
+		c6.setSigningDate(new Timestamp(sDate6.getTime()));
 		ksession.insert(c6);
 		
 		ksession.fireAllRules();
-	
-		CreditCountDTO cc = null;
-		for (Object obj : ksession.getObjects()) {
-			if (obj instanceof CreditCountDTO) {
-				cc = (CreditCountDTO) obj;
-				break;
-			}
+
+		
+		Collection<?> newEvents_ = ksession.getObjects(new ClassObjectFilter(CreditCountDTO.class));
+		
+		assertThat(newEvents_.size(), equalTo(1));
+		
+		for (Object o : newEvents_) {
+			assertThat(((CreditCountDTO) o).getList().size(), equalTo(3));
+			assertThat(((CreditCountDTO) o).getList().get(0).getCount(), equalTo(3));
+			assertThat(((CreditCountDTO) o).getList().get(1).getCount(), equalTo(2));
+			assertThat(((CreditCountDTO) o).getList().get(2).getCount(), equalTo(1));
 		}
 		
-		assertThat(cc.getList().size(), equalTo(3));
-		assertThat(cc.getList().get(0).getCount(), equalTo(3));
-		assertThat(cc.getList().get(1).getCount(), equalTo(2));
-		assertThat(cc.getList().get(2).getCount(), equalTo(1));
+
 
 		Collection<?> newEvents = ksession.getObjects(new ClassObjectFilter(ContractList.class));
 		for (Object o : newEvents) {

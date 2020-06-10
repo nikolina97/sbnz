@@ -1,8 +1,14 @@
 package com.sbnz.bankcredit.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CreditCountDTO {
+public class CreditCountDTO implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private List<CreditTypeNumberDTO> list;
 

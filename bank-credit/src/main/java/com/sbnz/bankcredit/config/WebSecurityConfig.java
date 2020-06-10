@@ -1,10 +1,21 @@
 package com.sbnz.bankcredit.config;
 
+import java.io.IOException;
+
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.KieRepository;
+import org.kie.api.builder.ReleaseId;
 import org.kie.api.runtime.KieContainer;
+import org.kie.internal.io.ResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -31,11 +42,44 @@ import com.sbnz.bankcredit.service.CustomUserDetailsService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
+//	private static final String RULES_PATH = "rules/";
+//	@Bean
+//	public KieFileSystem kieFileSystem() throws IOException {
+//		KieFileSystem kieFileSystem = getKieServices().newKieFileSystem();
+//		for (Resource file : getRuleFiles()) {
+//			System.out.println(file.getFilename());
+//			kieFileSystem.write(ResourceFactory.newClassPathResource(RULES_PATH + file.getFilename(), "UTF-8"));
+//		}
+//		return kieFileSystem;
+//	}
+//	private Resource[] getRuleFiles() throws IOException {
+//		ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+//		return resourcePatternResolver.getResources("classpath*:" + RULES_PATH + "**/*.*");
+//	}
+//	@Bean
+//	public KieContainer kieContainer() throws IOException {
+//		final KieRepository kieRepository = getKieServices().getRepository();
+//		kieRepository.addKieModule(new KieModule() {
+//			public ReleaseId getReleaseId() {
+//				return kieRepository.getDefaultReleaseId();
+//			}
+//		});
+//		KieBuilder kieBuilder = getKieServices().newKieBuilder(kieFileSystem());
+//		kieBuilder.buildAll();
+//		return getKieServices().newKieContainer(kieRepository.getDefaultReleaseId());
+//	}
+//	private KieServices getKieServices() {
+//		return KieServices.Factory.get();
+//	}
+//	
 	@Bean
 	public KieContainer kieContainer() {
-		return KieServices.Factory.get().getKieClasspathContainer();
+		 KieServices ks = KieServices.Factory.get();
+         KieContainer kContainer = ks.getKieClasspathContainer();
+         return kContainer;
+         //		return KieServices.Factory.get().getKieClasspathContainer();
 	}
-
+	   
 	// Implementacija PasswordEncoder-a koriscenjem BCrypt hashing funkcije.
 	// BCrypt po defalt-u radi 10 rundi hesiranja prosledjene vrednosti.
 	@Bean

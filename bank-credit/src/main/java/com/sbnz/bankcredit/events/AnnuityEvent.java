@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.kie.api.definition.type.Role;
-import org.kie.api.definition.type.Timestamp;
+//import org.kie.api.definition.type.Timestamp;
 
 @Role(Role.Type.EVENT)
-@Timestamp("executionTime")
+//@Timestamp("executionTime")
 public class AnnuityEvent implements Serializable{
 
 	/**

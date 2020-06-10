@@ -17,7 +17,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<kie.version>6.3.0.Final</kie.version>
+		<kie.version>6.0.0.Final</kie.version>
 	</properties>
 
 	<dependencies>
@@ -42,6 +42,7 @@
 			<artifactId>spring-session-core</artifactId>
 		</dependency>
 
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -64,14 +65,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.drools</groupId>
-		    <artifactId>drools-core</artifactId>
-		    <version>6.3.0.Final</version>
-		</dependency>
-		<dependency>
 		    <groupId>org.kie</groupId>
 		    <artifactId>kie-spring</artifactId>
-		    <version>6.3.0.Final</version>
+		    <version>${kie.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

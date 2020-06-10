@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
+import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class CreditRequestService {
 		User uclient = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Client client = userDetailsService.getClient(uclient);
 		CreditRequest cr = CreditRequestMapper.getCreditRequestFromDTO(creditReqDTO);
+		
 		KieSession kieSession = kieContainer.newKieSession("rulesSession");
 		kieSession.getAgenda().getAgendaGroup("basic req rules").setFocus();
 		kieSession.insert(cr);

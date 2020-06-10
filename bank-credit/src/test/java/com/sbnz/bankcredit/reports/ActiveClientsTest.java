@@ -34,7 +34,7 @@ public class ActiveClientsTest {
     }
 	
 	public void run(KieSession ksession) {
-		
+				
 		Client client1 = new Client();
 		client1.setJmbg("123-123-123");
 		client1.setRewardPoints(20);
