@@ -49,5 +49,15 @@ public class ClientsController {
 		
 	}
 	
+	@PostMapping("/remove")
+	public ResponseEntity<?> removeClient(@RequestBody Client client) {
+		try {
+			return new ResponseEntity<>(clientsService.remove(client), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
 	
 }

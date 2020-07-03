@@ -3,69 +3,75 @@
         <button type="button" class="btn btn-info" (click) = "addNewClient()">Dodaj novog klijenta</button>
     </div>
 </nav>
-<div class="header bg-gradient-danger pb-8 pt-5 pt-md-7">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xl-4 col-lg-5" *ngFor="let client of clients; let i = index">
-                <ng-container *ngIf="(((i % 3) == 0) && (i!==0)); then newRow;">
-                </ng-container>
-                <ng-template #newRow>
-                    <div class="row">
-                        <br>
-                    </div>
-                </ng-template>
-                <div class="card card-stats mb-4 mb-xl-0">
-                    <div class="card-body">
+<ng-template [ngIf] = "!editClient">
+    <div class="header bg-gradient-danger pb-8 pt-5 pt-md-7">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-4 col-lg-5" *ngFor="let client of clients; let i = index">
+                    <ng-container *ngIf="(((i % 3) == 0) && (i!==0)); then newRow;">
+                    </ng-container>
+                    <ng-template #newRow>
                         <div class="row">
-                            <div class="col">
-                                <h5 class="card-title text-uppercase text-muted mb-0">Klijent</h5>
-                                <span class="h2 font-weight-bold mb-0">{{client.firstName}} {{client.lastName}}</span>
-                            </div>
-                            <div class="col-auto">
-                                <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
-                                    <i class="fas fa-chart-bar"></i>
+                            <br>
+                        </div>
+                    </ng-template>
+                    <div class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Klijent</h5>
+                                    <span class="h2 font-weight-bold mb-0">{{client.firstName}} {{client.lastName}}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
                                 </div>
                             </div>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2">Broj računa: </span>
+                                <span class="text-nowrap">{{client.account?.accountNumber}}</span>
+                            </p>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2">Stanje na računu: </span>
+                                <span class="text-nowrap">{{client.account?.balance | currency: 'EUR':true}}</span>
+                            </p>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2">Mjesečna primanja: </span>
+                                <span class="text-nowrap">{{client.monthlyIncome | currency: 'EUR':true}}</span>
+                            </p>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2">Mjesečni izdaci: </span>
+                                <span class="text-nowrap">{{client.monthlyOutcome | currency: 'EUR':true}}</span>
+                            </p>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2">Matični broj: </span>
+                                <span class="text-nowrap">{{client.jmbg}}</span>
+                            </p>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2">Datum rođenja: </span>
+                                <span class="text-nowrap">{{client.dateOfBirth | date:'dd/MM/yyyy'}}</span>
+                            </p>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2">Datum otvaranja računa: </span>
+                                <span class="text-nowrap">{{client.accountOpeningDate | date:'dd/MM/yyyy'}}</span>
+                            </p>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2">Nagradni bodovi: </span>
+                                <span class="text-nowrap">{{client.rewardPoints}}</span>
+                            </p>
+                            <br>
+                            <button type="button" class="btn btn-info" (click) = "edit(client)">Izmjeni</button>
+                            <button type="button" class="btn btn-danger" (click) = "remove(client)">Ukloni</button>
                         </div>
-                        <p class="mt-3 mb-0 text-muted text-sm">
-                            <span class="text-success mr-2">Broj računa: </span>
-                            <span class="text-nowrap">{{client.account?.accountNumber}}</span>
-                        </p>
-                        <p class="mt-3 mb-0 text-muted text-sm">
-                            <span class="text-success mr-2">Stanje na računu: </span>
-                            <span class="text-nowrap">{{client.account?.balance | currency: 'EUR':true}}</span>
-                        </p>
-                        <p class="mt-3 mb-0 text-muted text-sm">
-                            <span class="text-success mr-2">Mjesečna primanja: </span>
-                            <span class="text-nowrap">{{client.monthlyIncome | currency: 'EUR':true}}</span>
-                        </p>
-                        <p class="mt-3 mb-0 text-muted text-sm">
-                            <span class="text-success mr-2">Mjesečni izdaci: </span>
-                            <span class="text-nowrap">{{client.monthlyOutcome | currency: 'EUR':true}}</span>
-                        </p>
-                        <p class="mt-3 mb-0 text-muted text-sm">
-                            <span class="text-success mr-2">Matični broj: </span>
-                            <span class="text-nowrap">{{client.jmbg}}</span>
-                        </p>
-                        <p class="mt-3 mb-0 text-muted text-sm">
-                            <span class="text-success mr-2">Datum rođenja: </span>
-                            <span class="text-nowrap">{{client.dateOfBirth | date:'dd/MM/yyyy'}}</span>
-                        </p>
-                        <p class="mt-3 mb-0 text-muted text-sm">
-                            <span class="text-success mr-2">Datum otvaranja računa: </span>
-                            <span class="text-nowrap">{{client.accountOpeningDate | date:'dd/MM/yyyy'}}</span>
-                        </p>
-                        <p class="mt-3 mb-0 text-muted text-sm">
-                            <span class="text-success mr-2">Nagradni bodovi: </span>
-                            <span class="text-nowrap">{{client.rewardPoints}}</span>
-                        </p>
-                        <br>
-                        <button type="button" class="btn btn-info">Izmjeni</button>
-                        <button type="button" class="btn btn-danger">Ukloni</button>
                     </div>
                 </div>
             </div>
         </div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     </div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-</div>
+</ng-template>
+
+<ng-template [ngIf]= "editClient">
+    <app-edit-client [client] = "client"></app-edit-client>
+</ng-template>

@@ -28,6 +28,10 @@ export class ContractComponent implements OnInit {
     this.creditRequestService.sendRequest(this.contract).subscribe(
       (result) => {
         console.log(result);
+        if (result["accepted"] == false) {
+          alert("Nisu ispunjeni uslovi za mjesecna zaduzenja.");
+          window.location.reload();
+        }
         this.contract = result['contract'];
         this.showRequest = false;
         this.showContract = true;

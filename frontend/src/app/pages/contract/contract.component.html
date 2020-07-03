@@ -62,6 +62,15 @@
                                     </table>
                                 </div>
                             </ng-template>
+                            <ng-template [ngIf]="contract.creditRequest.warrantly.guarantor != null">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="zirant">Garancija: zirant</label>
+                                        <input type="text" id="zirant" class="form-control form-control-alternative"
+                                            value="{{contract?.creditRequest.warrantly.guarantor.jmbg}}" readonly>
+                                    </div>
+                                </div>
+                            </ng-template>
                         </div>
                     </div>
                 </div>
@@ -90,7 +99,7 @@
                     <div class="form-group">
                         <label class="form-control-label" for="inputGroupSelect01">Period
                             isplate</label>
-                        <input type="number" id="input-sum" class="form-control"
+                        <input type="number" id="inputGroupSelect01" class="form-control"
                             value="{{contract?.creditRequest.monthlyPaymentPeriod}}" readonly>
                     </div>
                 </div>
@@ -98,15 +107,15 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label class="form-control-label" for="input-sum">Kamata</label>
-                        <input type="text" id="input-sum" class="form-control form-control-alternative"
+                        <label class="form-control-label" for="input-interest">Kamata</label>
+                        <input type="text" id="input-interest" class="form-control form-control-alternative"
                             value="{{contract?.interest}}" readonly>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label class="form-control-label" for="inputGroupSelect01">Mjesecna rata</label>
-                        <input type="number" id="input-sum" class="form-control"
+                        <label class="form-control-label" for="input-monthlyPayment">Mjesecna rata</label>
+                        <input type="number" id="input-monthlyPayment" class="form-control"
                             value="{{contract?.monthlyPayment}}" readonly>
                     </div>
                 </div>
@@ -114,15 +123,15 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label class="form-control-label" for="input-sum">Ukupna suma</label>
-                        <input type="text" id="input-sum" class="form-control form-control-alternative"
+                        <label class="form-control-label" for="input-remainingSum">Ukupna suma</label>
+                        <input type="text" id="input-remainingSum" class="form-control form-control-alternative"
                             value="{{contract?.remainingSum}}" readonly>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label class="form-control-label" for="inputGroupSelect01">Datum</label>
-                        <input type="text" id="input-sum" class="form-control"
+                        <label class="form-control-label" for="input-signingDate">Datum</label>
+                        <input type="text" id="input-signingDate" class="form-control"
                             value="{{contract?.signingDate | date:'medium'}}" readonly>
                     </div>
                 </div>

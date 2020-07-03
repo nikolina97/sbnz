@@ -25,4 +25,14 @@ export class ClientService {
     const url = `${this.creditUrl}addNew`;
     return this.http.post<any[]>(url, client, { headers: this.headers });
   }
+
+  updateClient(clientDto : any) {
+    const url = `${this.creditUrl}update`;
+    return this.http.post<any>(url, clientDto, { headers: this.headers });
+  }
+
+  removeClient(client : any) {
+    const url = `${this.creditUrl}remove`;
+    return this.http.post<any>(url, client, { headers: this.headers }); 
+  }
 }

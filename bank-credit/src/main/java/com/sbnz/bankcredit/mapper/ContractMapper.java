@@ -7,7 +7,8 @@ public class ContractMapper {
 		
 	public static ContractInfoDTO toDTO(Contract contract) {
 		ContractInfoDTO contractInfoDTO = new ContractInfoDTO(contract.getId(), contract.getClient().getAccount(), contract.getClient().getFirstName(), 
-				contract.getClient().getLastName(), contract.getClient().getJmbg(), contract.getMonthlyPayment(), contract.getInterest(), contract.getSigningDate(), contract.getRemainingSum());
+				contract.getClient().getLastName(), contract.getClient().getJmbg(), contract.getMonthlyPayment(), contract.getInterest(), contract.getSigningDate(), contract.getRemainingSum(),
+				contract.getCreditRequest().getSumOfMoney(), contract.isActive());
 		return contractInfoDTO;
 	}
 	

@@ -57,13 +57,13 @@ public class CreditRequestController {
 		return new ResponseEntity<>(answer, HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasRole('ROLE_CLIENT')")
+//	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@GetMapping( value = "/proba")
     public ResponseEntity<?> proba() {
 		
-		User uclient = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Client client = userDetailsService.getClient(uclient);
-		return new ResponseEntity<>(client, HttpStatus.OK);
+//		User uclient = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//		Client client = userDetailsService.getClient(uclient);
+		return new ResponseEntity<>(creditRequestService.proba(), HttpStatus.OK);
 	}
 	
 	

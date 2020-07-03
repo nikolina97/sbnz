@@ -26,6 +26,7 @@ import com.sbnz.bankcredit.model.User;
 import com.sbnz.bankcredit.model.Warrantly;
 import com.sbnz.bankcredit.repository.IClientRepository;
 import com.sbnz.bankcredit.repository.IContractRepository;
+import com.sbnz.bankcredit.repository.IUserRepository;
 
 @Service
 public class CreditRequestService {
@@ -89,6 +90,21 @@ public class CreditRequestService {
 		if (cr.getWarrantly().getRealEstate() != null) {
 			for (RealEstate re : cr.getWarrantly().getRealEstate()) {
 				kieSession.insert(re);
+			}
+		}
+		else if (cr.getWarrantly().getGuarantor() != null) {
+			Client user = clientRepository.findOneByJmbg(cr.getWarrantly().getGuarantor().getJmbg()).orElse(null);
+			if (user == null) {
+				return new Answer(false, "Ne postoji klijent sa unijetim jmbg-om");
+			}
+			else {
+				cr.getWarrantly().setGuarantor(user);
+				kieSession.insert(user);
+				kieSession.getAgenda().getAgendaGroup("basic req rules").setFocus();
+				Collection<Contract> conts = contractRepository.findAll();
+				for (Contract con : conts) {
+					kieSession.insert(con);
+				}
 			}
 		}
 		kieSession.fireAllRules();
@@ -165,13 +181,34 @@ public class CreditRequestService {
 			kieSession.insert(con);
 		}
 		kieSession.fireAllRules();
+		Answer answer = null;
+		for (Object obj : kieSession.getObjects()) {
+			if (obj instanceof Answer) {
+				answer = (Answer) obj;
+				return answer;
+			}
+		}
 		kieSession.dispose();
 		
 		Date now = new Date();
 		Timestamp ts = new Timestamp(now.getTime());
 		cr.setSigningDate(ts);
-		Answer answer = new Answer(true, "Ponuda", cr);
+		answer = new Answer(true, "Ponuda", cr);
 		
 		return answer;
+	}
+
+	public Object proba() {
+		KieSession kieSession = kieContainer.newKieSession("rulesSession");
+		Contract c = new Contract();
+		c.setId(20L);
+		kieSession.insert(c);
+		
+		int rules = kieSession.fireAllRules();
+		System.out.println("num rules: " + rules);
+		kieSession.fireAllRules();
+		kieSession.dispose();
+
+		return rules;
 	}
 }

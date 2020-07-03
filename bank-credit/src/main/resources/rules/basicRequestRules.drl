@@ -1,11 +1,11 @@
 package rules
- 
+
 import com.sbnz.bankcredit.model.CreditRequest;
 import com.sbnz.bankcredit.model.Answer;
 import com.sbnz.bankcredit.model.CreditType;
 import com.sbnz.bankcredit.model.Contract;
 import com.sbnz.bankcredit.model.Client;
-	
+
 rule "Zahtjev se odbija ako je suma veca od 300 000"
 	agenda-group "basic req rules"
 	when
@@ -146,4 +146,4 @@ rule "Pozitivan odgovor"
 		not(Answer(accepted == false))
 	then
 		insert(new Answer(true, "Osnovni uslovi vezani za zahtjev su ispunjeni "));
-	end
+	end  

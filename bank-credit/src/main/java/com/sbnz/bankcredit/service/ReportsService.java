@@ -54,6 +54,8 @@ public class ReportsService {
 		for (Object obj : kieSession.getObjects()) {
 			if (obj instanceof CreditCountDTO) {
 				System.out.println("ccdto");
+				kieSession.dispose();
+				kieSession.destroy();
 				return (CreditCountDTO) obj;
 			}
 			if (obj instanceof Contract) {
@@ -62,6 +64,7 @@ public class ReportsService {
 		}
 		
 		kieSession.dispose();
+		kieSession.destroy();
 
 		return null;
 	}
@@ -83,6 +86,8 @@ public class ReportsService {
 			}
 		}
 		kieSession.dispose();
+		kieSession.destroy();
+
 		return contractList;
 	}
 
@@ -103,6 +108,8 @@ public class ReportsService {
 			}
 		}
 		kieSession.dispose();
+		kieSession.destroy();
+
 		return contractList;
 	}
 
@@ -121,6 +128,9 @@ public class ReportsService {
 		}
 		kieSession.insert(activeClients);
 		kieSession.fireAllRules();
+		
+		kieSession.dispose();
+		kieSession.destroy();
 		
 		return activeClients;
 		

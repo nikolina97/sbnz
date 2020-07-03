@@ -23,9 +23,15 @@ private formGuarantee = this.fb.group ({
   inputSquareFootage : [null, Validators.required]
 })
 
+private formGuarantor = this.fb.group ({
+  guarantorJmbg : [null, Validators.required]
+})
+
 basicDisplayed = true;
 guaranteeDisplayed = false;
 fullRequest  = false;
+guarantorDisplayed = false;
+insuranceDisplayed = false;
 
 realEstates : any[] = []
 creditRequest : any;
@@ -54,6 +60,11 @@ submit(){
         console.log(this.form.value.guaranteeType);
         if (this.form.value.guaranteeType == 'nekretnina') {
           this.guaranteeDisplayed = true;
+          this.guarantorDisplayed = false;
+        }
+        else if (this.form.value.guaranteeType == "zirant") {
+          this.guarantorDisplayed = true;
+          this.guaranteeDisplayed = false;
         }
         // window.location.reload();
       }
@@ -91,7 +102,45 @@ checkWarrantly() {
       alert(result['description']);
       this.contract = result['contract'];
       this.guaranteeDisplayed = false;
-      this.fullRequest = true;
+      if (result['accepted'] == false) {
+        this.fullRequest = false;
+        window.location.reload();
+      }
+      else{
+
+      this.fullRequest = true;}
+    },
+    (error) => {
+      console.log(error);
+    }
+  )
+}
+
+submitGuarantor() {
+  var warrantly = {
+    guarantor : {
+      jmbg : this.formGuarantor.value.guarantorJmbg
+    },
+    insurance : null,
+    realEstate : null
+
+  }
+  this.creditRequest.warrantly = warrantly;
+  console.log("Request ", this.creditRequest);
+  this.creditRequestService.checkWarrantly(this.creditRequest).subscribe(
+    (result) => {
+      console.log(result);
+      alert(result['description']);
+      this.contract = result['contract'];
+      this.guarantorDisplayed = false;
+      if (result['accepted'] == false) {
+        this.fullRequest = false;
+        window.location.reload();
+      }
+      else{
+
+      this.fullRequest = true;}
+      
     },
     (error) => {
       console.log(error);

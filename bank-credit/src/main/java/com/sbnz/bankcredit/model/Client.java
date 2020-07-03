@@ -41,12 +41,16 @@ public class Client extends User{
 	@Column(name = "reward_points")
 	private int rewardPoints;
 	
+	@Column(name = "active")
+	private boolean active;
+	
 	public Client() {
 		super();
 	}
 
 	public Client(String username, String password, String firstName, String lastName, List<Authority> authorities) {
 		super(username, password, firstName, lastName, authorities);
+		this.active = true;
 	}
 
 	public Client(String username, String password, String firstName, String lastName, List<Authority> authorities,
@@ -60,6 +64,7 @@ public class Client extends User{
 		this.monthlyOutcome = monthlyOutcome;
 		this.accountOpeningDate = accountOpeningDate;
 		this.rewardPoints = rewardPoints;
+		this.active = true;
 	}
 
 	public Timestamp getDateOfBirth() {
@@ -117,5 +122,13 @@ public class Client extends User{
 	public void setRewardPoints(int rewardPoints) {
 		this.rewardPoints = rewardPoints;
 	}
-	
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 }

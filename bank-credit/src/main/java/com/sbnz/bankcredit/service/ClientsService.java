@@ -51,7 +51,7 @@ public class ClientsService {
 	}
 	
 	public List<Client> getAllClients() {
-		List<Client> clients = clientRepository.findAll();
+		List<Client> clients = clientRepository.findByActive(true);
 		return clients;
 	}
 
@@ -110,6 +110,13 @@ public class ClientsService {
 		this.accountRepository.save(client.getAccount());
 		this.userRepository.save(client);
 		return client;
+	}
+
+	public Client remove(Client client) {
+		Client c = clientRepository.findById(client.getId()).orElse(null);
+		c.setActive(false);
+		this.userRepository.save(c);
+		return c;
 	}
 
 }

@@ -23,13 +23,17 @@ public class ContractInfoDTO {
 	private Timestamp signingDate;
 	
 	private double remainingSum;
-
+	
+	private double sumOfMoney;
+	
+	private boolean active;
+	
 	public ContractInfoDTO() {
 		super();
 	}
 
 	public ContractInfoDTO(long contractId, Account account, String clientFirstName, String clientLasName, String jmbg,
-			double monthlyPayment, double interest, Timestamp signingDate, double remainingSum) {
+			double monthlyPayment, double interest, Timestamp signingDate, double remainingSum, double sumOfMoney, boolean active) {
 		super();
 		this.contractId = contractId;
 		this.account = account;
@@ -40,6 +44,8 @@ public class ContractInfoDTO {
 		this.interest = interest;
 		this.signingDate = signingDate;
 		this.remainingSum = remainingSum;
+		this.sumOfMoney = sumOfMoney;
+		this.active = active;
 	}
 
 	public long getContractId() {
@@ -114,5 +120,23 @@ public class ContractInfoDTO {
 		this.remainingSum = remainingSum;
 	
 	}
+
+	public double getSumOfMoney() {
+		return sumOfMoney;
+	}
+
+	public void setSumOfMoney(double sumOfMoney) {
+		this.sumOfMoney = sumOfMoney;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
+	
 	
 }

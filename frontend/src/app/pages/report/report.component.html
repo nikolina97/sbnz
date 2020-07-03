@@ -1,0 +1,143 @@
+<nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
+    <div class="container-fluid">
+        <span><button type="button" class="btn btn-info" (click) = "table1Method()">Broj kredita grupisanih po tipu</button></span>
+        <span><button type="button" class="btn btn-info" (click) = "table2Method()">Najveci kredit</button></span>
+        <span><button type="button" class="btn btn-info" (click) = "table3Method()">Najmanji kredit</button></span>
+        <span><button type="button" class="btn btn-info" (click) = "table4Method()">Najaktivniji klijent</button></span>
+
+    </div>
+</nav>
+<div class="header bg-gradient-danger pb-8 pt-5 pt-md-7">
+    <ng-template [ngIf]="table1">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <caption>Broj kredita grupisanih po tipu</caption>
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Tip kredita</th>
+                                <th scope="col">Broj</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor = "let cc of creditCount">
+                                <th scope="row">
+                                    {{cc.creditType}}
+                                </th>
+                                <td>
+                                    {{cc.count}}
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <br>
+
+    <ng-template [ngIf]="table2">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <caption>Najveci krediti</caption>
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Suma novca</th>
+                                <th scope="col">Jmbg klijenta</th>
+                                <th scope="col">Datum potpisivanja</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor = "let lc of largestCredits">
+                                <th scope="row">
+                                    {{lc.creditRequest.sumOfMoney}}
+                                </th>
+                                <td>
+                                    {{lc.client.jmbg}}
+                                </td>
+                                <td>
+                                    {{lc.signingDate | date:'dd/MM/yyyy'}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <br>
+
+    <ng-template [ngIf]="table3">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <caption>Najmanji krediti</caption>
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Suma novca</th>
+                                <th scope="col">Jmbg klijenta</th>
+                                <th scope="col">Datum potpisivanja</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor = "let sc of smallestCredits">
+                                <th scope="row">
+                                    {{sc.creditRequest.sumOfMoney}}
+                                </th>
+                                <td>
+                                    {{sc.client.jmbg}}
+                                </td>
+                                <td>
+                                    {{sc.signingDate | date:'dd/MM/yyyy'}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+<br>
+
+    <ng-template [ngIf]="table4">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <caption>Najaktivniji klijenti</caption>
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Ime i prezime</th>
+                                <th scope="col">Jmbg klijenta</th>
+                                <th scope="col">Datum otvaranja racuna</th>
+                                <th scope="col">Dodatni bodovi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor = "let c of activeClients">
+                                <th scope="row">
+                                    {{c.firstName}} {{c.lastName}}
+                                </th>
+                                <td>
+                                    {{c.jmbg}}
+                                </td>
+                                <td>
+                                    {{c.accountOpeningDate | date:'dd/MM/yyyy'}}
+                                </td>
+                                <td>
+                                    {{c.rewardPoints}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+<br><br><br><br><br><br>
+</div>  

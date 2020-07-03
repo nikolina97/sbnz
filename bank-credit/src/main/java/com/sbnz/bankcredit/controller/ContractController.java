@@ -32,5 +32,10 @@ public class ContractController {
 	public ResponseEntity<?> addContract(@RequestBody Contract contract){
 		return new ResponseEntity<>(contractService.addContract(contract), HttpStatus.OK);
 	}
+	
+	@PostMapping("/stop")
+	public ResponseEntity<?> addContract(@RequestBody ContractInfoDTO contractDto){
+		return new ResponseEntity<>(contractService.stop(contractDto), HttpStatus.OK);
+	}
 
 }

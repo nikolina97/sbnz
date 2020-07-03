@@ -1,9 +1,10 @@
 package com.sbnz.bankcredit.events;
 
+import org.kie.api.definition.type.Expires;
 import org.kie.api.definition.type.Role;
 
 @Role(Role.Type.EVENT)
-//@Expires("5m")
+@Expires("5m")
 public class SuspiciousUserEvent {
 	
 	private String username;

@@ -2,11 +2,11 @@ package com.sbnz.bankcredit.events;
 
 import java.io.Serializable;
 
-//import org.kie.api.definition.type.Expires;
+import org.kie.api.definition.type.Expires;
 import org.kie.api.definition.type.Role;
 
 @Role(Role.Type.EVENT)
-//@Expires("20m")
+@Expires("20m")
 public class LoginEvent implements Serializable {
 	
 	/**

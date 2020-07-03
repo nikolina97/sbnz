@@ -447,3 +447,39 @@ rule "Kamata se umanjuje za 40% i racuna se mjesecna rata"
 		System.out.println("40% " + $contract.getInterest());
 	end
 
+rule "Zahtjev se prihvata ako su klijentova mjesecna zaduzenja manja od 40% mjesecnih primanja"
+	agenda-group "reward points"
+	when
+		not(Answer())
+		$client : Client()
+		$contract : Contract (client == $client, signed == false, active == true, $payment : monthlyPayment)
+		Client(monthlyOutcome + $payment > 0.4*monthlyIncome)
+	then
+		System.out.println("Klijentova mjesecna zaduzenja i primanja ne zadovoljavaju zahtjeve");
+		insert(new Answer(false, "Klijentova mjesecna zaduzenja i primanja ne zadovoljavaju zahtjeve"));
+	end
+
+rule "Zahtjev se odbija ako zirantova mjesecna zaduzenja manja od 40% primanja"
+	agenda-group "reward points"
+	when
+		not(Answer())
+		$client : Client()
+		$contract : Contract (client == $client, signed == false, active == true, $payment : monthlyPayment)
+		CreditRequest(client == $client, warrantly != null, warrantly.guarantor != null, warrantly.guarantor.monthlyOutcome + $payment > 0.4*warrantly.guarantor.monthlyIncome)
+	then
+		System.out.println("Zirantova mjesecna zaduzenja i primanja ne zadovoljavaju zahtjeve");
+		insert(new Answer(false, "Zirantova mjesecna zaduzenja i primanja ne zadovoljavaju zahtjeve"));
+	end
+/*
+rule "Setuj klijentova mjesecna primanja"
+	agenda-group "reward points"
+	salience -5
+	no-loop
+	when
+		not (Answer(accepted == false))
+		$client : Client()
+		$contract : Contract (client == $client, signed == false, active == true, $payment : paymentMonthly, interest != 0)	
+	then
+		double monthlyPay = $client.getMonthlyOutcome();
+		modify($client){setMonthlyOutcome($payment + monthlyPay);}
+	end*/

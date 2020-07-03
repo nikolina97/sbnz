@@ -20,4 +20,15 @@ export class ContractService {
     const url = `${this.creditUrl}addContract`;
     return this.http.post(url, contract, { headers: this.headers });
   }
+
+  getAll() {
+    const url = `${this.creditUrl}all`;
+    return this.http.get<any[]>(url, { headers: this.headers });
+
+  }
+
+  stop(credit){
+    const url = `${this.creditUrl}stop`;
+    return this.http.post(url, credit, { headers: this.headers });
+  }
 }
