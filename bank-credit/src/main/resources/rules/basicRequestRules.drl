@@ -91,9 +91,11 @@ rule "Zahtjev se odbija ako klijent ima vise od 65 godina, a vremenski period is
 	agenda-group "basic req rules"
 	when
 		$date : Date($t : time)
-		$client: Client(dateOfBirth.getTime() < $t)
+		$cr : CreditRequest($monthlyPaymentPeriod : monthlyPaymentPeriod)
+		$client: Client(dateOfBirth.getTime() < $t && $monthlyPaymentPeriod > 180)
 	then
-		insert(new Answer(false, "Maksimalan vremenski period isplate kredite u odnosu na vase godine je 15 godina"));
+		System.out.println("Maksimalan vremenski period isplate kredita u odnosu na vase godine je 15 godina");
+		insert(new Answer(false, "Maksimalan vremenski period isplate kredita u odnosu na vase godine je 15 godina"));
 	end
 
 rule "Zahtjev se odbija ako klijent ima vise od 1 stambenog ili investicionog kredita i vise od 2 potrosacka"

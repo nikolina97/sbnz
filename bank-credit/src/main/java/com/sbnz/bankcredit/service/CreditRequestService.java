@@ -64,6 +64,12 @@ public class CreditRequestService {
 		for (Contract con : conts) {
 			kieSession.insert(con);
 		}
+		Date date = new Date();
+		Calendar c = Calendar.getInstance(); 
+		c.setTime(date);
+		c.add(Calendar.YEAR, -65);
+		date = c.getTime();
+		kieSession.insert(date);
 		kieSession.fireAllRules();
 		
 		Answer answer = null;

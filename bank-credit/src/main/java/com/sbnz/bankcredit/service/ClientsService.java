@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,9 @@ public class ClientsService {
 	
 	@Autowired
 	private IUserRepository userRepository;
+	
+	@Autowired
+	private CustomUserDetailsService userDetailsService;
 	
 	public void encodePassword(User u) {
 		String pass =  this.passwordEncoder.encode(u.getPassword());
@@ -117,6 +121,12 @@ public class ClientsService {
 		c.setActive(false);
 		this.userRepository.save(c);
 		return c;
+	}
+
+	public Account getAccount() {
+		User uclient = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Client client = userDetailsService.getClient(uclient);
+		return client.getAccount();
 	}
 
 }

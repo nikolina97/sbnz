@@ -59,5 +59,15 @@ public class ClientsController {
 		
 	}
 	
+	@GetMapping("/account")
+	public ResponseEntity<?> getAccount() {
+		try {
+			return new ResponseEntity<>(clientsService.getAccount(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
 	
 }

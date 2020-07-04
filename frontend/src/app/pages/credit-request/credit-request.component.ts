@@ -61,10 +61,18 @@ submit(){
         if (this.form.value.guaranteeType == 'nekretnina') {
           this.guaranteeDisplayed = true;
           this.guarantorDisplayed = false;
+          this.insuranceDisplayed = false;
         }
         else if (this.form.value.guaranteeType == "zirant") {
           this.guarantorDisplayed = true;
+          this.insuranceDisplayed = false;
           this.guaranteeDisplayed = false;
+        }
+        else{
+          this.insuranceDisplayed = true;
+          this.guaranteeDisplayed = false;
+          this.guarantorDisplayed = false;
+          this.submitInsurance();
         }
         // window.location.reload();
       }
@@ -133,6 +141,32 @@ submitGuarantor() {
       alert(result['description']);
       this.contract = result['contract'];
       this.guarantorDisplayed = false;
+      if (result['accepted'] == false) {
+        this.fullRequest = false;
+        window.location.reload();
+      }
+      else{
+
+      this.fullRequest = true;}
+      
+    },
+    (error) => {
+      console.log(error);
+    }
+  )
+}
+
+submitInsurance(){
+  var warrantly = {
+    guarantor : null,
+    insurance : true,
+    realEstate : null
+  }
+  this.creditRequest.warrantly = warrantly;
+  this.creditRequestService.checkWarrantly(this.creditRequest).subscribe(
+    (result) => {
+      this.contract = result['contract'];
+      this.insuranceDisplayed = false;
       if (result['accepted'] == false) {
         this.fullRequest = false;
         window.location.reload();

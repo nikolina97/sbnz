@@ -73,6 +73,15 @@ rule "Zahtjev se odbija ako nekretnine nemaju dovoljnu vrijednost"
 		System.out.println("Zahtjev se odbija ako nekretnine nemaju dovoljnu vrijednost");
 		insert(new Answer(false, "Nekretnine nemaju dovoljnu vrijednost"));
 	end
+	
+rule "Osiguranje kao garancija"
+	salience -5
+	agenda-group "warrantly"
+	when
+		
+	then
+		
+	end
 
 rule "Pozitivan odgovor za garanciju"
 	salience -10
@@ -83,5 +92,3 @@ rule "Pozitivan odgovor za garanciju"
 		System.out.println("Pozitivan odgovor za garanciju");
 		insert(new Answer(true, "Osnovni uslovi za garanciju su ispunjeni"));
 	end	
-
-//Dodati pravila za ziranta 

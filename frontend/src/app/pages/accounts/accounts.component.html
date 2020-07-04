@@ -1,5 +1,24 @@
-<p>accounts works!</p>
-SADFNFANDKLDNF
-lkadnflknfak;adf
-fdaknfdalkfnda
-fdmal;fmadk;fmadkfadklfmadkfndakfn
+<div class="main-content">
+    <div class="bg-gradient-danger pb-8 pt-5 pt-md-8">
+        <div class="container-fluid">
+            <div class="card card-stats mb-6 mb-xl-0">
+                <div class="card-body">
+                    <div class="row">
+                        <h5 class="card-title text-uppercase text-muted mb-0">Podaci o racunu</h5>
+                    </div>
+                    <div class ="row">
+                        <p class="mt-3 mb-0 text-muted text-sm">
+                            <span class="text-success mr-2">Broj računa: </span>
+                            <span class="text-nowrap">{{account?.accountNumber}}</span>
+                        </p>
+                    </div>
+                    <div class ="row">
+                        <p class="mt-3 mb-0 text-muted text-sm">
+                            <span class="text-success mr-2">Stanje na računu: </span>
+                            <span class="text-nowrap">{{account?.balance | currency: 'EUR':true}}</span>
+                        </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -35,4 +35,9 @@ export class ClientService {
     const url = `${this.creditUrl}remove`;
     return this.http.post<any>(url, client, { headers: this.headers }); 
   }
+
+  getAccount(){
+    const url = `${this.creditUrl}account`;
+    return this.http.get<any>(url, { headers: this.headers }); 
+  }
 }

@@ -71,6 +71,15 @@
                                     </div>
                                 </div>
                             </ng-template>
+                            <ng-template [ngIf]="contract.creditRequest.warrantly.insurance == true">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label">Garancija: osiguranje</label>
+                                        <!-- <input type="text" id="zirant" class="form-control form-control-alternative"
+                                            value="{{contract?.creditRequest.warrantly.guarantor.jmbg}}" readonly> -->
+                                    </div>
+                                </div>
+                            </ng-template>
                         </div>
                     </div>
                 </div>
